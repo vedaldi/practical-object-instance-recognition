@@ -6,9 +6,7 @@ load('data/oxbuild_query.mat', 'query') ;
 shortlistSize = 100 ;
 
 for i = 1:numel(query)
-  fprintf('query %03d: %s\n', i, query(i).name) ;
   k = find(imdb.images.id == query(i).imageId) ;
-  k = 1 ;
   assert(~isempty(k)) ;
 
   % database labels for evaluation in retrieval (make sure we
@@ -22,7 +20,9 @@ for i = 1:numel(query)
   h = getHistogram(imdb, imdb.images.frames{k}, imdb.images.descrs{k}, query(i).box) ;
 
   % get inverted index scores ;
+  results(i).index_time = tic ;
   scores = h' * imdb.index ;
+  results(i).index_time = toc(results(i).index_time) ;
 
   % inverted index evaluation
   [rc,pr,info] = vl_pr(y, scores) ;
@@ -32,18 +32,62 @@ for i = 1:numel(query)
 
   % rescores shortlist based on geometric verification
   [~, perm] = sort(scores, 'descend') ;
+  results(i).geom_time = tic ;
   for j = perm
-    scores(j) = geometicVerification(scores(j), ...
-                                     imdb.images.frames{k}, imdb.images.descrs{k}, ...
-                                     imdb.images.frames{perm(j)}, imdb.images.descrs{perm(j)}) ;
+    scores(j) = geometricVerification(scores(j), ...
+                                      imdb.images.frames{k}, imdb.images.descrs{k}, ...
+                                      imdb.images.frames{perm(j)}, imdb.images.descrs{perm(j)}) ;
   end
+  results(i).geom_time = toc(results(i).geom_time) ;
+  [~, perm] = sort(scores, 'descend') ;
 
   % rescoring evaluation
   [rc,pr,info] = vl_pr(y, scores) ;
   results(i).geom_rc = rc ;
   results(i).geom_pr = pr ;
   results(i).geom_ap = info.ap ;
+
+  fprintf('query %03d: %-20s mAP:%5.2f   mAP+geom:%5.2f\n', i, ...
+          query(i).name, results(i).index_ap, results(i).geom_ap) ;
+
+  if 1
+    figure(1) ; clf ; hold on ;
+    imagesc(imread(fullfile(imdb.dir, imdb.images.name{k}))) ;
+    plotbox(query(i).box, 'linewidth', 5) ;
+    axis image off ;
+
+    figure(2) ; clf ;
+    for j = 1:4*4
+      vl_tightsubplot(4*4, j) ;
+      im = imread(fullfile(imdb.dir, imdb.images.name{perm(j)})) ;
+      imagesc(im) ;
+      axis image off ; hold on ;
+      switch y(perm(j))
+        case 1, sty = {'color', 'g'} ;
+        case 0, sty = {'color', 'y'} ;
+        case -1, sty = {'color', 'r'} ;
+      end
+      plotbox([1,1,size(im,2),size(im,1)]','linewidth',10,sty{:}) ;
+      text(0,0,sprintf('%g', full(scores(perm(j)))), ...
+           'background', 'w', ...
+           'verticalalignment', 'top') ;
+    end
+
+    figure(3) ; clf ; hold on ;
+    plot(results(i).index_rc, results(i).index_pr, 'color', 'b', 'linewidth', 3) ;
+    plot(results(i).geom_rc, results(i).geom_pr, 'color', 'g', 'linewidth', 2) ;
+    grid on ; axis equal ;
+    title(sprintf('%s', query(i).name), 'interpreter', 'none') ;
+    legend(sprintf('index: %.2f',results(i).index_ap*100), ...
+           sprintf('index+geom: %.2f',results(i).geom_ap*100)) ;
+    xlim([0 1]) ;ylim([0 1]);
+    drawnow ;
+  end
 end
 
-fprintf('index map: %g\n', mean([results.index_ap])*100) ;
-fprintf('geom map: %g\n', mean([results.geom_ap])*100) ;
+fprintf('index: mAP: %g, time: %.2f\n', ...
+        mean([results.index_ap])*100, ...
+        mean([results.index_time])) ;
+fprintf('index+geom: mAP: %g, time: %.2f\n', ...
+        mean([results.geom_ap])*100, ...
+        mean([results.geom_time])) ;

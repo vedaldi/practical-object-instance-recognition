@@ -13,4 +13,4 @@ end
 
 h = sparse(double(descrs), 1, 1, imdb.numWords, 1) ;
 h = imdb.idf .* h ;
-h = sqrt(h / sum(h)) ;
+h = sqrt(h / max(sum(h),1e-10)) ;

@@ -18,14 +18,18 @@ end
 %                                                      Setup Oxford 5k
 % --------------------------------------------------------------------
 
-lite = true ;
+lite = false ;
 imdb.dir = 'data/oxbuild_images' ;
-imdb.numWords = 100 ;
+imdb.numWords = 10e4 ;
 names = dir(fullfile(imdb.dir, '*.jpg')) ;
-imdb.images.name = {names.name} ;
+if lite, names = names(1:10) ; end
 
-if lite, imdb.images.name = imdb.images.name(1:10) ; end
-imdb.images.id = 1:numel(imdb.images.name) ;
+imdb.images.id = 1:numel(names); 
+imdb.images.name = cell(1,numel(names)) ;
+for i = 1:numel(names)
+  [~,base] = fileparts(names(i).name) ;
+  imdb.images.name{i} = base ;
+end
 
 function i = toindex(x)
   [~,i] = ismember(x,imdb.images.name) ;
@@ -34,9 +38,11 @@ end
 names = dir('data/oxbuild_gt/*_query.txt') ;
 names = {names.name} ;
 for i = 1:numel(names)
-  [imageName,x0,y0,y1,x1] = textread(fullfile('data/oxbuild_gt/', names{i}), '%s %f %f %f %f') ;
+  [imageName,x0,y0,x1,y1] = textread(fullfile('data/oxbuild_gt/', names{i}), '%s %f %f %f %f') ;
   name = names{i} ;
   name = name(1:end-10) ;
+  imageName = cell2mat(imageName) ;
+  imageName = imageName(6:end) ;
   query(i).name = name ;
   query(i).imageName = imageName ;
   query(i).imageId = toindex(imageName) ;
@@ -52,10 +58,12 @@ save('data/oxbuild_query.mat', 'query') ;
 % --------------------------------------------------------------------
 
 descrs = cell(1,numel(imdb.images.name)) ;
-for i = 1:numel(imdb.images.name)
+numWordsPerImage = ceil(imdb.numWords * 10 / numel(imdb.images.name)) ;
+parfor i = 1:numel(imdb.images.name)
+  fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
   [~,descrs{i}] = extractFeatures(imread(fullfile(imdb.dir, imdb.images.name{i})),false,false) ;
   randn('state',i) ;
-  descrs{i} = vl_colsubset(descrs{i},10) ;
+  descrs{i} = vl_colsubset(descrs{i},numWordsPerImage) ;
 end
 
 descrs = cat(2,descrs{:}) ;
@@ -66,7 +74,8 @@ descrs = cat(2,descrs{:}) ;
 % --------------------------------------------------------------------
 
 clear frames descrs ;
-for i = 1:numel(imdb.images.name)
+parfor i = 1:numel(imdb.images.name)
+  fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
   [frames{i},descrs{i}] = extractFeatures(imread(fullfile(imdb.dir, imdb.images.name{i})),false,false) ;
   descrs{i} = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs{i}) ;
 end
