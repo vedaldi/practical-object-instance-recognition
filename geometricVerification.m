@@ -11,6 +11,8 @@ function [score, matches] = geometricVerification(score, f1, d1, f2, d2)
   [ok, matches] = ismember(d1,d2) ;
   x1 = f1(1:2,ok) ; x1(end+1,:) = 1 ;
   x2 = f2(1:2,matches(ok)) ;
+  x1 = double(x1) ;
+  x2 = double(x2) ;
 
   inliers = cell(1, numel(d1)) ;
   scores = zeros(1, numel(d1)) ;

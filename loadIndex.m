@@ -7,6 +7,11 @@ opts.shortListSize = 100 ;
 opts = vl_argparse(opts, varargin) ;
 
 imdb = load(imdbPath) ;
+info = whos('imdb') ;
+fprintf('index: total number of features: %.2f M\n', full(sum(sum(imdb.index)))/1e6) ;
+fprintf('index: average num features per image: %.1f\n', full(mean(sum(imdb.index)))) ;
+fprintf('index: size: %.1f GB\n', whos.bytes / 1024^3) ;
+
 imdb.shortListSize = opts.shortListSize ;
 imdb.sqrtHistograms = opts.sqrtHistograms ;
 imdb.idf = log(numel(imdb.images.id)) - log(max(sum(imdb.index > 0, 2),1)) ;

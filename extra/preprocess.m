@@ -116,6 +116,7 @@ function setupOxford5k(imdb, suffix, numWords, featureOpts)
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
     [frames{i},descrs{i}] = getFeatures(imread(...
       fullfile(imdb.dir, imdb.images.name{i})), imdb.featureOpts{:}) ;
+    frames{i} = single(frames{i}) ;
     descrs{i} = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs{i}, ...
                                'maxNumComparisons', 1024) ;
   end

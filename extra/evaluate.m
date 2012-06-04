@@ -7,17 +7,21 @@ switch 11
   case 2, imdbPath = 'data/oxbuild_imdb_100k_odisc.mat' ;
   case 3, imdbPath = 'data/oxbuild_imdb_100k_ellipse.mat' ;
   case 4, imdbPath = 'data/oxbuild_imdb_100k_oellipse.mat' ;
-  case 11, imdbPath = 'data/oxbuild_imdb_100k_disc_hessian.mat' ;
+  case 11, imdbPath = 'data/oxbuild_imdb_100k_disc_hessian2.mat' ;
   case 12, imdbPath = 'data/oxbuild_imdb_100k_odisc_hessian.mat' ;
   case 13, imdbPath = 'data/oxbuild_imdb_100k_ellipse_hessian.mat' ;
   case 14, imdbPath = 'data/oxbuild_imdb_100k_oellipse_hessian.mat' ;
 end
 imdb = loadIndex(imdbPath, 'sqrtHistograms', false, 'shortListSize', 200) ;
-fprintf('average num features per image: %.1f\n', full(mean(sum(imdb.index > 0)))) ;
 
 % run evaluation
 load('data/oxbuild_query.mat', 'query') ;
-results = doEvaluation(imdb, query)
+diary([imdbPath(1:end-4) '.txt']) ;
+diary on ;
+fprintf('imdb:\n') ;
+disp(imdb) ;
+results = doEvaluation(imdb, query) ;
+diary off ;
 
 % --------------------------------------------------------------------
 function results = doEvaluation(imdb, query)
