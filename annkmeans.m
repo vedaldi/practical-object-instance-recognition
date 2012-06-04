@@ -25,6 +25,7 @@ opts.numTrees = 3 ;
 opts.maxNumComparisons = 500 ;
 opts.maxNumIterations = 100 ;
 opts.verbose = 0 ;
+opts.tolerance = 0.001 ;
 opts = vl_argparse(opts, varargin) ;
 
 % get initial centers
@@ -34,6 +35,9 @@ centers = vl_colsubset(X, K) ;
 if opts.verbose
   fprintf('%s: clustering %d vectors into %d parts\n', ...
           mfilename, size(X,2), K) ;
+  fprintf('%s: random seed = %g\n', mfilename, opts.seed) ;
+  fprintf('%s: tolerance = %g\n', mfilename, opts.tolerance) ;
+  fprintf('%s: numTrees = %d\n', mfilename, opts.numTrees) ;
   fprintf('%s: maxNumComparisons = %d\n', mfilename, opts.maxNumComparisons) ;
   fprintf('%s: maxNumIterations = %d\n', mfilename, opts.maxNumIterations) ;
 end
@@ -93,7 +97,7 @@ for t = 1:opts.maxNumIterations
     fprintf('%s: %d: energy = %g, reinitialized = %d\n', mfilename,t,E(t),length(rei)) ;
   end
 
-  if t > 1 && E(t) > 0.999 * E(t-1), break ; end
+  if t > 1 && E(t) > (1 - opts.tolerance) * E(t-1), break ; end
 end
 
 % prepare final resutls
