@@ -1,16 +1,33 @@
-function h = getHistogram(imdb, frames, descrs, box)
+function [h,frames,descrs] = getHistogram(imdb, frames, descrs, varargin)
 % GETHISTOGRAM
-%   H = GETHISTOGRAM(IMDB, FRAMES, DESCRS, BOX)
+%   H = GETHISTOGRAM(IMDB, FRAMES, DESCRS) computes a visual word
+%   histogram from the specified featrures. IMDB is the image database
+%   structure, which includes the visual word dictionary as well as
+%   the KDTree for fast projection. FRAMES are the feature frames
+%   (keypoints) and DESCRS the quantized feature descriptors. H is a
+%   vector with a dimension equal to the size of the visual words
+%   vocabualry contained in IMDB.
+%
+%   Options:
+%
+%   Box:: []
+%     Set to [xmin;ymin;xmax;ymax] to specify a bounding box in the image.
 
-if nargin > 3
-  ok = frames(1,:) >= box(1) & ...
-       frames(1,:) <= box(3) & ...
-       frames(2,:) >= box(2) & ...
-       frames(2,:) <= box(4) ;
+% Author: Andrea Vedaldi
+
+opts.box = [] ;
+opts = vl_argparse(opts, varargin) ;
+
+if ~isempty(opts.box)
+  ok = frames(1,:) >= opts.box(1) & ...
+       frames(1,:) <= opts.box(3) & ...
+       frames(2,:) >= opts.box(2) & ...
+       frames(2,:) <= opts.box(4) ;
   frames = frames(:, ok) ;
   descrs = descrs(ok) ;
 end
 
 h = sparse(double(descrs), 1, 1, imdb.numWords, 1) ;
 h = imdb.idf .* h ;
-h = sqrt(h / max(sum(h),1e-10)) ;
+if imdb.sqrtHistograms, h = sqrt(h) ; end
+h = h / sqrt(sum(h.*h)) ;

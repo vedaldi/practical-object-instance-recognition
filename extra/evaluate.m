@@ -1,12 +1,29 @@
+function evaluate()
 % EVALUATE
 
-imdb = load('data/oxbuild_imdb.mat') ;
+% prepare index
+switch 11
+  case 1, imdbPath = 'data/oxbuild_imdb_100k_disc.mat' ;
+  case 2, imdbPath = 'data/oxbuild_imdb_100k_odisc.mat' ;
+  case 3, imdbPath = 'data/oxbuild_imdb_100k_ellipse.mat' ;
+  case 4, imdbPath = 'data/oxbuild_imdb_100k_oellipse.mat' ;
+  case 11, imdbPath = 'data/oxbuild_imdb_100k_disc_hessian.mat' ;
+  case 12, imdbPath = 'data/oxbuild_imdb_100k_odisc_hessian.mat' ;
+  case 13, imdbPath = 'data/oxbuild_imdb_100k_ellipse_hessian.mat' ;
+  case 14, imdbPath = 'data/oxbuild_imdb_100k_oellipse_hessian.mat' ;
+end
+imdb = loadIndex(imdbPath, 'sqrtHistograms', false, 'shortListSize', 200) ;
+fprintf('average num features per image: %.1f\n', full(mean(sum(imdb.index > 0)))) ;
+
+% run evaluation
 load('data/oxbuild_query.mat', 'query') ;
+results = doEvaluation(imdb, query)
 
-shortlistSize = 100 ;
-scores = zeros(1,numel(query)) ;
-matches = cell(1,numel(query)) ;
+% --------------------------------------------------------------------
+function results = doEvaluation(imdb, query)
+% --------------------------------------------------------------------
 
+results = cell(1,numel(query)) ;
 for i = 1:numel(query)
   k = find(imdb.images.id == query(i).imageId) ;
   assert(~isempty(k)) ;
@@ -17,87 +34,24 @@ for i = 1:numel(query)
   y(query(i).good) = 1 ;
   y(query(i).ok) = 1 ;
   y(query(i).junk) = 0 ;
-  y(k) = 0 ;
+  y(k) = 0 ; % ooops ?
 
-  results(i).features_time = tic ;
-  h = getHistogram(imdb, imdb.images.frames{k}, imdb.images.descrs{k}, query(i).box) ;
-  results(i).features_time = toc(results(i).features_time) ;
+  results{i} = search(imdb, imdb.images.id(k), ...
+                      'box', query(i).box, ...
+                      'verbose', false) ;
 
-  % get inverted index scores ;
-  results(i).index_time = tic ;
-  scores = h' * imdb.index ;
-  results(i).index_time = toc(results(i).index_time) ;
+  [rc,pr,info] = vl_pr(y, results{i}.index_scores) ;
+  results{i}.index_rc = rc ;
+  results{i}.index_pr = pr ;
+  results{i}.index_ap = info.ap ;
 
-  % inverted index evaluation
-  [rc,pr,info] = vl_pr(y, scores) ;
-  results(i).index_rc = rc ;
-  results(i).index_pr = pr ;
-  results(i).index_ap = info.ap ;
-
-  % rescores shortlist based on geometric verification
-  [~, perm] = sort(scores, 'descend') ;
-  results(i).geom_time = tic ;
-  for j = vl_colsubset(perm(3:end), shortlistSize, 'beginning') ;
-    [scores(j), matches{j}] = ...
-        geometricVerification(scores(j), ...
-                              imdb.images.frames{k}, imdb.images.descrs{k}, ...
-                              imdb.images.frames{j}, imdb.images.descrs{j}) ;
-
-    if 0
-      figure(3) ; clf ;
-      im0 = imread(fullfile(imdb.dir, imdb.images.name{k})) ;
-      im = imread(fullfile(imdb.dir, imdb.images.name{j})) ;
-      plotmatches(im0,im, ...
-                  imdb.images.frames{k}, ...
-                  imdb.images.frames{j}, ...
-                  matches{j}) ;
-    end
-  end
-  results(i).geom_time = toc(results(i).geom_time) ;
-  [~, perm] = sort(scores, 'descend') ;
-
-  % rescoring evaluation
-  [rc,pr,info] = vl_pr(y, scores) ;
-  results(i).geom_rc = rc ;
-  results(i).geom_pr = pr ;
-  results(i).geom_ap = info.ap ;
+  [rc,pr,info] = vl_pr(y, results{i}.geom_scores) ;
+  results{i}.geom_rc = rc ;
+  results{i}.geom_pr = pr ;
+  results{i}.geom_ap = info.ap ;
 
   fprintf('query %03d: %-20s mAP:%5.2f   mAP+geom:%5.2f\n', i, ...
-          query(i).name, results(i).index_ap, results(i).geom_ap) ;
-
-  if 0
-    figure(1) ; clf ;
-    im0 = imread(fullfile(imdb.dir, imdb.images.name{k})) ;
-    imagesc(im0) ; hold on ;
-    plotbox(query(i).box, 'linewidth', 5) ;
-    axis image off ;
-
-    figure(2) ; clf ;
-    for j = 1:4*4
-      vl_tightsubplot(4*4, j) ;
-      im = imread(fullfile(imdb.dir, imdb.images.name{perm(j)})) ;
-      imagesc(im) ;
-      axis image off ; hold on ;
-      switch y(perm(j))
-        case 1, sty = {'color', 'g'} ;
-        case 0, sty = {'color', 'y'} ;
-        case -1, sty = {'color', 'r'} ;
-      end
-      plotbox([1,1,size(im,2),size(im,1)]','linewidth',10,sty{:}) ;
-      text(0,0,sprintf('%g', full(scores(perm(j)))), ...
-           'background', 'w', ...
-           'verticalalignment', 'top') ;
-    end
-  end
-
-  if 0
-    figure(3) ; clf ; j = 2 ;
-    im = imread(fullfile(imdb.dir, imdb.images.name{perm(j)})) ;
-    plotmatches(im0,im, ...
-                imdb.images.frames{k}, ...
-                imdb.images.frames{perm(j)}, ...
-                matches{perm(j)}) ;
-  end
+          query(i).name, results{i}.index_ap, results{i}.geom_ap) ;
 
   if 0
     figure(10) ; clf ; hold on ;
@@ -111,6 +65,8 @@ for i = 1:numel(query)
     drawnow ;
   end
 end
+
+results = cat(2, results{:}) ;
 
 fprintf('features: time %.2g\n', ...
         mean([results.features_time])) ;
