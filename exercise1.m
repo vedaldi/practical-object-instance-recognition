@@ -1,10 +1,10 @@
-% EXERCSIE1: basic features
+% PART I: basic features
 
 % setup MATLAB to use our software
 setup ;
 
 % --------------------------------------------------------------------
-%                                     Stage A: SIFT features detection
+%                                    Stage I.A: SIFT features detection
 % --------------------------------------------------------------------
 
 % Load the two images
@@ -34,7 +34,7 @@ subplot(1,2,2) ; imagesc(im3) ; axis equal off ; hold on ;
 vl_plotframe(frames3, 'linewidth', 2) ;
 
 % --------------------------------------------------------------------
-%       Stage B: SIFT features descriptors and matching between images
+%     Stage I.B: SIFT features descriptors and matching between images
 % --------------------------------------------------------------------
 
 % Visualize SIFT descriptors (only a few)
@@ -55,7 +55,7 @@ plotMatches(im1,im2,frames1,frames2,matches) ;
 title('Nearest neighbour matches') ;
 
 % --------------------------------------------------------------------
-% Stage C: Improving matching (i) Lowe's second nearest neighbour test
+%  Stage I.C: Better matching (i) Lowe's second nearest neighbour test
 % --------------------------------------------------------------------
 
 % Find the top two neighbours as well as their distances
@@ -75,7 +75,7 @@ plotMatches(im1,im2,frames1,frames2,matches_2nn) ;
 title('Matches filtered by the second nearest neighbour test') ;
 
 % --------------------------------------------------------------------
-% Stage D: Improving matching (ii) geometric transformation
+%             Stage I.D: Better matching (ii) geometric transformation
 % --------------------------------------------------------------------
 
 inliers = geometricVerification(frames1, frames2, matches_2nn) ;

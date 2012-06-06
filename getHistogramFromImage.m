@@ -14,7 +14,7 @@ opts = vl_argparse(opts, varargin) ;
 
 % quantize the features
 descrs = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs, ...
-                                        'maxNumComparisons', opts.maxNumComparisons) ;
+                        'maxNumComparisons', opts.maxNumComparisons) ;
 
 % get the histogram
 [h,frames,decrs] = getHistogram(imdb, frames, descrs, 'box', opts.box) ;

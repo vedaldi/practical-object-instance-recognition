@@ -1,4 +1,4 @@
-% EXERCISE2: affine co-variant detector
+% PART II: Affine co-variant detector
 
 % setup MATLAB to use our software
 setup ;
