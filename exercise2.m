@@ -45,6 +45,7 @@ for o = 1:2
     plotMatches(im1,im2,frames1,frames2,matches_geom) ;
     if o == 1, title('similarity') ;
     else title('affine') ; end
+    drawnow ;
   end
 end
 
