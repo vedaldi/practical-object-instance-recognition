@@ -48,3 +48,23 @@ title(sprintf('Verified matches on visual words (%d, time %.3g s)',numel(inliers
 % --------------------------------------------------------------------
 % Stage III.B:
 % --------------------------------------------------------------------
+
+% Load an image DB
+imdb = loadIndex('data/oxbuild_imdb_100k_disc_hessian.mat') ;
+
+% Compute a histogram for a query image
+query = 2 ;
+im = imread(fullfile(imdb.dir, imdb.images.name{query})) ;
+h = getHistogramFromImage(imdb, im) ;
+
+% Score
+tic ;
+scores = h' * imdb.index ;
+time_index = toc ;
+
+fprintf('index time per image: %g s\n', time_index / size(imdb.index,2)) ;
+
+% Plot by decreasing score
+figure(2) ; clf ;
+plotRetrievedImages(imdb, scores) ;
+
