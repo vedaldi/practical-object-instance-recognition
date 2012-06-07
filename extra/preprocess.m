@@ -17,7 +17,7 @@ function preprocess()
   %                                                      Setup Oxford 5k
   % --------------------------------------------------------------------
   imdb = setupOxford5kBase('data/oxbuild_images') ;
-  for t = 3:3
+  for t = 3
     switch t
       case 1
         suffix = '100k_disc_hessian' ;
@@ -110,32 +110,17 @@ function setupOxford5k(imdb, suffix, numWords, featureOpts)
   % --------------------------------------------------------------------
   %                                                 Compute the features
   % --------------------------------------------------------------------
-
-  clear frames descrs ;
+  clear frames words ;
   parfor i = 1:numel(imdb.images.name)
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
     [frames{i},descrs{i}] = getFeatures(imread(...
       fullfile(imdb.dir, imdb.images.name{i})), imdb.featureOpts{:}) ;
     frames{i} = single(frames{i}) ;
-    descrs{i} = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs{i}, ...
+    words{i} = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs{i}, ...
                                'maxNumComparisons', 1024) ;
   end
 
   imdb.images.frames = frames ;
-  imdb.images.descrs = descrs ;
-
-  % --------------------------------------------------------------------
-  %                            Compute tf-idf weights and inverted index
-  % --------------------------------------------------------------------
-
-  for i = 1:numel(imdb.images.id)
-    indexes{i} = i * ones(1,numel(imdb.images.descrs{i})) ;
-  end
-
-  imdb.index = sparse(double([imdb.images.descrs{:}]), ...
-                      [indexes{:}], ...
-                      1, ...
-                      imdb.numWords, ...
-                      numel(imdb.images.id)) ;
+  imdb.images.words = words ;
   save(imdbPath, '-STRUCT', 'imdb') ;
 end

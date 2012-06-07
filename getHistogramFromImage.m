@@ -1,7 +1,7 @@
-function [h, frames, descrs] = getHistogramFromImage(imdb, im, varargin)
+function [h, frames, words, decrs] = getHistogramFromImage(imdb, im, varargin)
 % GETHISTOGRAMFROMIMAGE
 %   [H, FRAMES, DESCRS] = GETHISTOGRAMFROMIMAGE(IMDB, IM) is the
-%   same as calling [FRAMES, DESCRS] = GETFEATURES(IM) and then GETHISTOGRAMS
+%   same as calling [FRAMES, WORDS, DESCRS] = GETFEATURES(IM) and then GETHISTOGRAMS.
 
 % Author: Andrea Vedaldi
 
@@ -13,8 +13,8 @@ opts = vl_argparse(opts, varargin) ;
 [frames,descrs] = getFeatures(im,imdb.featureOpts{:}) ;
 
 % quantize the features
-descrs = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs, ...
-                        'maxNumComparisons', opts.maxNumComparisons) ;
+words = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs, ...
+                       'maxNumComparisons', opts.maxNumComparisons) ;
 
 % get the histogram
-[h,frames,decrs] = getHistogram(imdb, frames, descrs, 'box', opts.box) ;
+[h,frames,words] = getHistogram(imdb, frames, words, 'box', opts.box) ;

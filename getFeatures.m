@@ -20,7 +20,7 @@ function [frames, descrs] = getFeatures(im, varargin)
 opts.method = 'hessian' ;
 opts.affineAdaptation = false ;
 opts.orientation = true ;
-opts.peakThreshold = 0.001 ;
+opts.peakThreshold = 28 / 256^2 ;
 opts = vl_argparse(opts, varargin) ;
 
 if size(im,3) > 1, im = rgb2gray(im) ; end
@@ -34,4 +34,4 @@ im = im2single(im) ;
                              'Method', opts.method, ...
                              'PeakThreshold', opts.peakThreshold, ...
                              'Verbose') ;
-
+fames = single(frames) ;
