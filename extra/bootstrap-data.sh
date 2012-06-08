@@ -27,3 +27,11 @@ then
         -O data/archives/compute_ap.cpp
     (cd data ; cp -vf archives/compute_ap.cpp oxbuild_compute_ap.cpp)
 fi
+
+# Create a lite version
+mkdir -p data/oxbuild_lite
+(
+    ls -1 data/oxbuild_gt/*_{good,ok}.txt | sort | xargs cat
+    ls -1 data/oxbuild_gt/*_junk.txt | sort | xargs cat | head -n 300
+) | sort | uniq > data/oxbuild_lite.txt
+cat data/oxbuild_lite.txt | sed "s/^\(.*\)$/data\/oxbuild_images\/\1.jpg/" | xargs -I % cp -v % data/oxbuild_lite

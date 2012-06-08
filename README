@@ -6,10 +6,10 @@ CONTENTS:
 
 The package contains four exercises:
 
-exercise1.m --
-exercise2.m --
-exercise3.m --
-exercise4.m --
+exercise1.m -- Part I: Sparse features for matching specific objects in images
+exercise2.m -- Part II: Affine co-variant detectors
+exercise3.m -- Part III: Towards large scale retrieval
+exercise4.m -- Part IV: Large scale retrieval
 
 The computer vision algorithms are implemented by VLFeat
 (http://www.vlfeat.org). This package contains the following MATLAB
@@ -41,6 +41,9 @@ plotMatches.m
 
 plotRetrievedImages.m
         Plot search results.
+
+plotQueryImage.m
+        Plot the query image for a set of search results.
 
 search.m
         Search an image database.

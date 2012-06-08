@@ -8,7 +8,7 @@ setup ;
 % --------------------------------------------------------------------
 
 % Load an image
-im1 = imread('data/oxbuild_images/all_souls_000002.jpg') ;
+im1 = imread('data/oxbuild_lite/all_souls_000002.jpg') ;
 
 % Let the second image be a rotated and scaled version of the first
 im3 = imrotate(im1,35,'bilinear') ;
@@ -26,7 +26,7 @@ subplot(1,2,2) ; imagesc(im3) ; axis equal off ; hold on ;
 vl_plotframe(frames3, 'linewidth', 2) ;
 
 % Load a second image of the same scene
-im2 = imread('data/oxbuild_images/all_souls_000015.jpg') ;
+im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
 [frames2, descrs2] = getFeatures(im2, 'peakThreshold', 0.001) ;
 
 figure(2) ;

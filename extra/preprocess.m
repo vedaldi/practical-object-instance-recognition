@@ -18,7 +18,10 @@ function preprocess()
   % --------------------------------------------------------------------
   %                                                      Setup Oxford 5k
   % --------------------------------------------------------------------
-  imdb = setupOxford5kBase('data/oxbuild_images') ;
+  %prefix = 'data/oxbuild' ;
+  %imdb = setupOxford5kBase('data/oxbuild', 'data/oxbuild_images') ;
+  prefix = 'data/oxbuild_lite' ;
+  imdb = setupOxford5kBase(prefix, 'data/oxbuild_lite') ;
   for t = [1 3]
     switch t
       case 1
@@ -38,15 +41,16 @@ function preprocess()
         numWords = 100e3 ;
         featureOpts = {'method', 'hessian', 'affineAdaptation', true, 'orientation', true} ;
     end
-    setupOxford5k(imdb, suffix, numWords, featureOpts) ;
+    setupOxford5k(imdb, prefix, suffix, numWords, featureOpts) ;
   end
 end
 
 % --------------------------------------------------------------------
-function imdb = setupOxford5kBase(imPath)
+function imdb = setupOxford5kBase(prefix, imPath)
 % --------------------------------------------------------------------
-  imdbPath = 'data/oxbuild_imdb.mat' ;
-  if exist(imdbPath, 'file'), imdb = load(imdbPath) ; return ; end
+  imdbPath = [prefix '_imdb.mat'] ;
+  queryPath = [prefix '_query.mat'] ;
+  %if exist(imdbPath, 'file'), imdb = load(imdbPath) ; return ; end
   names = dir(fullfile(imPath, '*.jpg')) ;
 
   imdb.dir = imPath ;
@@ -58,7 +62,8 @@ function imdb = setupOxford5kBase(imPath)
     [~,postfixless{i}] = fileparts(imdb.images.name{i}) ;
   end
   function i = toindex(x)
-    [~,i] = ismember(x,postfixless) ;
+    [ok,i] = ismember(x,postfixless) ;
+    i = i(ok) ;
   end
   names = dir('data/oxbuild_gt/*_query.txt') ;
   names = {names.name} ;
@@ -77,13 +82,22 @@ function imdb = setupOxford5kBase(imPath)
     query(i).ok = toindex(textread(fullfile('data/oxbuild_gt/', sprintf('%s_ok.txt',name)), '%s')) ;
     query(i).junk = toindex(textread(fullfile('data/oxbuild_gt/', sprintf('%s_junk.txt',name)), '%s')) ;
   end
-  save('data/oxbuild_query.mat', 'query') ;
+
+  % check for empty queries due to subsetting of the data
+  ok = true(1,numel(query)) ;
+  for i = 1:numel(query)
+    ok(i) = ~isempty(query(i).imageId) & ...
+            ~isempty(query(i).good) ;
+  end
+  query = query(ok) ;
+  fprintf('%d of %d are covered by the selected database subset\n',sum(ok),numel(ok)) ;
+  save(queryPath, 'query') ;
 end
 
 % --------------------------------------------------------------------
-function setupOxford5k(imdb, suffix, numWords, featureOpts)
+function setupOxford5k(imdb, prefix, suffix, numWords, featureOpts)
 % --------------------------------------------------------------------
-  imdbPath = ['data/oxbuild_imdb_' suffix '.mat'] ;
+  imdbPath = [prefix '_imdb_' suffix '.mat'] ;
   %if exist(imdbPath, 'file'), return ; end
   imdb.featureOpts = featureOpts ;
   imdb.numWords = numWords ;
