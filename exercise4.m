@@ -2,7 +2,7 @@
 
 % Load the database if not already in memory
 if ~exist('imdb', 'var')
-  imdb = loadIndex('data/oxbuild_imdb_100k_ellipse_hessian.mat', ...
+  imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat', ...
                    'sqrtHistograms', true) ;
 end
 

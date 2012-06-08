@@ -8,11 +8,14 @@ setup ;
 % --------------------------------------------------------------------
 
 % Load a visual word vocabulary
-load('data/oxbuild_imdb_100k_ellipse_hessian.mat', 'vocab', 'kdtree') ;
+load('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat', 'vocab', 'kdtree') ;
 
 % Load the two images
-im1 = imread('data/oxbuild_images/all_souls_000002.jpg') ;
-im2 = imread('data/oxbuild_images/all_souls_000015.jpg') ;
+%im1 = imread('data/oxbuild_lite/all_souls_000002.jpg') ;
+%im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
+im1 = imread('data/oxbuild_lite/ashmolean_000007.jpg') ;
+im2 = imread('data/oxbuild_lite/ashmolean_000028.jpg') ;
+
 
 % Compute SIFT features for each
 [frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.001, 'orientation', false) ;
@@ -55,7 +58,7 @@ title(sprintf('Verified matches on visual words (%d in %.3g s)',numel(inliers_wo
 % --------------------------------------------------------------------
 
 % Load an image DB
-imdb = loadIndex('data/oxbuild_imdb_100k_ellipse_hessian.mat') ;
+imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat') ;
 
 % Compute a histogram for the query image
 [h,frames,words] = getHistogramFromImage(imdb, im2) ;
@@ -67,7 +70,7 @@ time_index = toc ;
 
 % Plot results by decreasing score
 figure(2) ; clf ;
-plotRetrievedImages(imdb, scores) ;
+plotRetrievedImages(imdb, scores, 'num', 25) ;
 set(gcf,'name', 'III.B: Searching with an inverted index') ;
 fprintf('Search time per database image: %.3g s\n', time_index / size(imdb.index,2)) ;
 
@@ -79,7 +82,7 @@ fprintf('Search time per database image: %.3g s\n', time_index / size(imdb.index
 % inlier matches.
 
 [~, perm] = sort(scores, 'descend') ;
-for rank = 1:16
+for rank = 1:25
   [ok, matches] = ismember(words, imdb.images.words{perm(rank)}) ;
   matches = [find(ok) ; matches(ok)] ;
   inliers = geometricVerification(frames,imdb.images.frames{perm(rank)},...
@@ -90,5 +93,5 @@ end
 
 % Plot results by decreasing score
 figure(3) ; clf ;
-plotRetrievedImages(imdb, scores) ;
+plotRetrievedImages(imdb, scores, 'num', 25) ;
 set(gcf,'name', 'III.B: Searching with an inverted index - verification') ;
