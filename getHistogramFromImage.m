@@ -6,7 +6,7 @@ function [h, frames, words, decrs] = getHistogramFromImage(imdb, im, varargin)
 % Author: Andrea Vedaldi
 
 opts.box = [] ;
-opts.maxNumComparisons = 500 ;
+opts.maxNumComparisons = 1024 ;
 opts = vl_argparse(opts, varargin) ;
 
 % extract the features

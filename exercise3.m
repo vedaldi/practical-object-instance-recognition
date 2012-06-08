@@ -1,11 +1,14 @@
 % PART III: Towards large-scale retrieval
 
+% setup MATLAB to use our software
+setup ;
+
 % --------------------------------------------------------------------
-% Stage III.A:
+%      Stage III.A: Accelerating descriptor matching with visual words
 % --------------------------------------------------------------------
 
 % Load a visual word vocabulary
-load('data/oxbuild_imdb_100k_disc_hessian.mat', 'vocab', 'kdtree') ;
+load('data/oxbuild_imdb_100k_ellipse_hessian.mat', 'vocab', 'kdtree') ;
 
 % Load the two images
 im1 = imread('data/oxbuild_images/all_souls_000002.jpg') ;
@@ -39,32 +42,53 @@ inliers_raw = geometricVerification(frames1,frames2,matches_raw,'numRefinementIt
 inliers_word = geometricVerification(frames1,frames2,matches_word,'numRefinementIterations', 3) ;
 
 figure(1) ; clf ;
-subplot(2,1,1) ; plotmatches(im1,im2,frames1,frames2,matches_raw(:,inliers_raw)) ;
-title(sprintf('Verified matches on raw descritpors (%d, time %.3g s)',numel(inliers_raw),time_raw)) ;
+set(gcf,'name', 'III.B: Accelerating descriptor matching with visual words') ;
 
-subplot(2,1,2) ; plotmatches(im1,im2,frames1,frames2,matches_word(:,inliers_word)) ;
-title(sprintf('Verified matches on visual words (%d, time %.3g s)',numel(inliers_word),time_word)) ;
+subplot(2,1,1) ; plotMatches(im1,im2,frames1,frames2,matches_raw(:,inliers_raw)) ;
+title(sprintf('Verified matches on raw descritpors (%d in %.3g s)',numel(inliers_raw),time_raw)) ;
+
+subplot(2,1,2) ; plotMatches(im1,im2,frames1,frames2,matches_word(:,inliers_word)) ;
+title(sprintf('Verified matches on visual words (%d in %.3g s)',numel(inliers_word),time_word)) ;
 
 % --------------------------------------------------------------------
-% Stage III.B:
+%                        Stage III.B: Searching with an inverted index
 % --------------------------------------------------------------------
 
 % Load an image DB
-imdb = loadIndex('data/oxbuild_imdb_100k_disc_hessian.mat') ;
+imdb = loadIndex('data/oxbuild_imdb_100k_ellipse_hessian.mat') ;
 
-% Compute a histogram for a query image
-query = 2 ;
-im = imread(fullfile(imdb.dir, imdb.images.name{query})) ;
-h = getHistogramFromImage(imdb, im) ;
+% Compute a histogram for the query image
+[h,frames,words] = getHistogramFromImage(imdb, im2) ;
 
-% Score
+% Score the other images by similarity to the query
 tic ;
 scores = h' * imdb.index ;
 time_index = toc ;
 
-fprintf('index time per image: %g s\n', time_index / size(imdb.index,2)) ;
-
-% Plot by decreasing score
+% Plot results by decreasing score
 figure(2) ; clf ;
 plotRetrievedImages(imdb, scores) ;
+set(gcf,'name', 'III.B: Searching with an inverted index') ;
+fprintf('Search time per database image: %.3g s\n', time_index / size(imdb.index,2)) ;
 
+% --------------------------------------------------------------------
+%                                    Stage III.C: Geometric rearanking
+% --------------------------------------------------------------------
+
+% Rescore the top 16 images based on the number of
+% inlier matches.
+
+[~, perm] = sort(scores, 'descend') ;
+for rank = 1:16
+  [ok, matches] = ismember(words, imdb.images.words{perm(rank)}) ;
+  matches = [find(ok) ; matches(ok)] ;
+  inliers = geometricVerification(frames,imdb.images.frames{perm(rank)},...
+                                  matches,'numRefinementIterations', 3) ;
+  newScore = numel(inliers) ;
+  scores(perm(rank)) = max(scores(perm(rank)), newScore) ;
+end
+
+% Plot results by decreasing score
+figure(3) ; clf ;
+plotRetrievedImages(imdb, scores) ;
+set(gcf,'name', 'III.B: Searching with an inverted index - verification') ;

@@ -7,17 +7,19 @@ function preprocess()
   %                                                      Download VLFeat
   % --------------------------------------------------------------------
   if ~exist('vlfeat', 'dir')
-    from = 'http://www.vlfeat.org/download/vlfeat-0.9.15-bin.tar.gz' ;
+    from = 'http://www.vlfeat.org/sandbox/download/vlfeat-0.9.15-bin.tar.gz' ;
     fprintf('Downloading vlfeat from %s\n', from) ;
     untar(from, 'data') ;
     movefile('data/vlfeat-0.9.15', 'vlfeat') ;
   end
 
+  setup ;
+
   % --------------------------------------------------------------------
   %                                                      Setup Oxford 5k
   % --------------------------------------------------------------------
   imdb = setupOxford5kBase('data/oxbuild_images') ;
-  for t = 3
+  for t = [1 3]
     switch t
       case 1
         suffix = '100k_disc_hessian' ;
@@ -82,7 +84,7 @@ end
 function setupOxford5k(imdb, suffix, numWords, featureOpts)
 % --------------------------------------------------------------------
   imdbPath = ['data/oxbuild_imdb_' suffix '.mat'] ;
-  if exist(imdbPath, 'file'), return ; end
+  %if exist(imdbPath, 'file'), return ; end
   imdb.featureOpts = featureOpts ;
   imdb.numWords = numWords ;
 
@@ -93,7 +95,8 @@ function setupOxford5k(imdb, suffix, numWords, featureOpts)
   numWordsPerImage = ceil(imdb.numWords * 10 / numel(imdb.images.name)) ;
   parfor i = 1:numel(imdb.images.name)
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
-    [~,descrs{i}] = getFeatures(imread(fullfile(imdb.dir, imdb.images.name{i})), imdb.featureOpts{:}) ;
+    [~,descrs{i}] = getFeatures(imread(fullfile(imdb.dir, imdb.images.name{i})), ...
+                                imdb.featureOpts{:}) ;
     randn('state',i) ;
     descrs{i} = vl_colsubset(descrs{i},numWordsPerImage) ;
   end
@@ -113,11 +116,10 @@ function setupOxford5k(imdb, suffix, numWords, featureOpts)
   clear frames words ;
   parfor i = 1:numel(imdb.images.name)
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
-    [frames{i},descrs{i}] = getFeatures(imread(...
+    [frames{i},descrs] = getFeatures(imread(...
       fullfile(imdb.dir, imdb.images.name{i})), imdb.featureOpts{:}) ;
-    frames{i} = single(frames{i}) ;
-    words{i} = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs{i}, ...
-                               'maxNumComparisons', 1024) ;
+    words{i} = vl_kdtreequery(imdb.kdtree, imdb.vocab, descrs, ...
+                              'maxNumComparisons', 1024) ;
   end
 
   imdb.images.frames = frames ;

@@ -1,4 +1,4 @@
-% PART II: Affine co-variant detector
+% PART II: Affine co-variant detectors
 
 % setup MATLAB to use our software
 setup ;
@@ -11,7 +11,7 @@ imgPaths = {'data/graf/img1.png',...
             'data/graf/img5.png',...
             'data/graf/img6.png'} ;
 
-figure(1) ; clf ;
+figure(100) ; clf ; set(gcf, 'name', 'Part II: Affine co-variant detectors - summary') ;
 
 for o = 1:2
   % Get the features for the reference image
@@ -34,23 +34,33 @@ for o = 1:2
 
     % Geometric verification
     inliers = geometricVerification(frames1,frames2,matches_2nn,...
-                                    'numRefinementIterations', 3) ;
+                                    'numRefinementIterations', 8) ;
     matches_geom = matches_2nn(:, inliers) ;
 
     % Count the number of inliers
     numInliers(t,o) = size(matches_geom,2) ;
 
-    % Visulize
-    subplot(numel(imgPaths)-1, 2, (t-2)*2 + o) ;
+    % Visualize
+    n = (t-2)*2 + o ;
+    h = subplot(numel(imgPaths)-1, 2, n, 'parent', 100) ;
+    axes(h) ;
     plotMatches(im1,im2,frames1,frames2,matches_geom) ;
-    if o == 1, title('similarity') ;
-    else title('affine') ; end
+    switch o
+      case 1, type = 'similarity' ;
+      case 2, type = 'affinity' ;
+    end
+    title(sprintf('From 1 to %d with %s: num: %d', t, type, numInliers(t,o))) ;
+
+    figure(n) ; clf ;
+    set(gcf, 'name', sprintf('Part II:  Affine co-variant detectors - from 1 to %d with %s', t,type)) ;
+    c = copyobj(h, gcf) ; set(c, 'position', [0 0 1 1]) ;
     drawnow ;
   end
 end
 
 % Quantitative evaluation
-figure(100) ; clf ;
+figure(101) ; clf ;
+set(gcf, 'name', sprintf('Part II: Affine co-variant detectors - quantitative comparison')) ;
 plot(2:size(numInliers,1),numInliers(2:end,:),'linewidth', 3) ;
 axis tight ; grid on ;
 legend('similarity co-variant', 'affine co-variant') ;

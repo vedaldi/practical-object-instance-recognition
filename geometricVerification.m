@@ -8,8 +8,9 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 % Author: Andrea Vedaldi
 
   opts.tolerance1 = 20 ;
-  opts.tolerance2 = 20 ;
-  opts.minInliers = 4 ;
+  opts.tolerance2 = 15 ;
+  opts.tolerance3 = 20 ;
+  opts.minInliers = 6 ;
   opts.numRefinementIterations = 1 ;
   opts = vl_argparse(opts, varargin) ;
 
@@ -18,8 +19,11 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 
   x1 = double(f1(1:2, matches(1,:))) ;
   x2 = double(f2(1:2, matches(2,:))) ;
+
   x1hom = x1 ;
+  x2hom = x2 ;
   x1hom(end+1,:) = 1 ;
+  x2hom(end+1,:) = 1 ;
 
   for m = 1:numMatches
     for t = 1:opts.numRefinementIterations
@@ -27,22 +31,62 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
         A1 = toAffinity(f1(:,matches(1,m))) ;
         A2 = toAffinity(f2(:,matches(2,m))) ;
         A21 = A2 * inv(A1) ;
-        tol = opts.tolerance1 ;
+        x1p = A21(1:2,:) * x1hom ;
+        tol = opts.tolerance1 * sqrt(det(A21(1:2,1:2))) ;
+      elseif t <= 4
+        % affinity
+        A21 = x2(:,inliers{m}) / x1hom(:,inliers{m}) ;
+        x1p = A21(1:2,:) * x1hom ;
+        tol = opts.tolerance1 * sqrt(det(A21(1:2,1:2))) ;
       else
-        A21 = x1hom(:,inliers{m})' \ x2(:,inliers{m})' ;
-        A21 = reshape(A21,3,2)' ;
-        tol = opts.tolerance2 ;
+        % homography
+        x1in = x1hom(:,inliers{m}) ;
+        x2in = x2hom(:,inliers{m}) ;
+
+        % Sanity check
+        %H = [.1 0 .4 ; 2 .3 .5 ; .1 .002 1] ;
+        %x1in = [randn(2,100) ; ones(1,100)] ;
+        %x2in = H*x1in ;
+        %x2in = bsxfun(@times, x2in, 1./x2in(3,:)) ;
+
+        S1 = centering(x1in) ;
+        S2 = centering(x2in) ;
+        x1c = S1 * x1in ;
+        x2c = S2 * x2in ;
+
+        M = [x1c, zeros(size(x1c)) ;
+             zeros(size(x1c)), x1c ;
+             bsxfun(@times, x1c,  -x2c(1,:)), bsxfun(@times, x1c,  -x2c(2,:))] ;
+        [H21,D] = svd(M,'econ') ;
+        H21 = reshape(H21(:,end),3,3)' ;
+        H21 = inv(S2) * H21 * S1 ;
+        H21 = H21 ./ H21(end) ;
+
+        x1phom = H21 * x1hom ;
+        x1p = [x1phom(1,:) ./ x1phom(3,:) ; x1phom(2,:) ./ x1phom(3,:)] ;
+        tol = opts.tolerance1 * sqrt(det(H21(1:2,1:2))) ;
       end
 
-      x1p = A21(1:2,:) * x1hom ;
       dist2 = sum((x2 - x1p).^2,1) ;
-      inliers{m} = find(dist2 < det(A21(1:2,1:2)) * tol^2) ;
+      inliers{m} = find(dist2 < tol^2) ;
       if numel(inliers{m}) < opts.minInliers, break ; end
+      if numel(inliers{m}) > 0.7 * size(matches,2), break ; end % enoguh!
     end
   end
   scores = cellfun(@numel, inliers) ;
   [~, best] = max(scores) ;
   inliers = inliers{best} ;
+end
+
+% --------------------------------------------------------------------
+function C = centering(x)
+% --------------------------------------------------------------------d
+  T = [eye(2), - mean(x(1:2,:),2) ; 0 0 1] ;
+  x = T * x ;
+  S = [1 ./ std(x(1,:)) 0 0 ;
+       0 1 ./ std(x(2,:)) 0 ;
+       0 0 1] ;
+  C = S * T ;
 end
 
 % --------------------------------------------------------------------
