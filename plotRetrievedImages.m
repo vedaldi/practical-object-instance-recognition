@@ -4,7 +4,7 @@ function plotRetrievedImages(imdb, res, varargin)
 %   database IMDB that have largest SCORES. SCORES is a row vector of
 %   size equal to the number of images in IMDB.
 
-% Author: Andrea Vedaldi
+% Author: Andrea Vedaldi and Mireca Cimpoi
 
 opts.num = 16 ;
 opts.labels = [] ;
@@ -116,8 +116,8 @@ content = urlread(['http://en.wikipedia.org/w/api.php?action=query&prop=imageinf
                    urlencode(imgTitle)]);
 
 % isolate the tag
-[s e] = regexp(content, '<ii .* />', 'start', 'end');
-iiTagContent = content(s:e);
+[s e] = regexp(content, '<ii .*" /></imageinfo>', 'start', 'end');
+iiTagContent = content(s:e - 12);
 
 % comment attribute
 [s e] = regexp(iiTagContent, 'parsedcomment=".*" url', 'start', 'end');
@@ -127,5 +127,5 @@ comment = iiTagContent(s + 15 : e - 5);
 [s e] = regexp(iiTagContent, 'url=".*" desc', 'start', 'end');
 imgUrl = iiTagContent(s + 5: e - 6);
 
-[s e] = regexp(iiTagContent, 'descriptionurl=".*" />', 'start', 'end');
-descUrl = iiTagContent(s + 16: e - 4);
+[s e] = regexp(iiTagContent, ' descriptionurl=".*" />', 'start', 'end');
+descUrl = iiTagContent(s + 17: e - 4);

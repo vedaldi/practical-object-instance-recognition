@@ -39,8 +39,14 @@ end
 function imdb = setupArtBase(prefix, artDir)
 % --------------------------------------------------------------------
   imdbPath = [prefix '_imdb.mat'] ;
+  listPath = fullfile(artDir, 'filelist001.txt') ;
 
-  [names, wikiNames] = textread(fullfile(artDir, 'filelist001.txt'),'%s\t%s','whitespace','\t') ;
+  [f,msg]=fopen(listPath, 'r','n','UTF-8') ;
+  txt = fscanf(f,'%c') ;
+  fclose(f) ;
+  data = textscan(txt,'%s\t%s','whitespace','\t') ;
+  names = data{1} ;
+  wikiNames = data{2} ;
 
   imdb.dir = fullfile(artDir,'paintings_resized') ;
   imdb.images.id = 1:numel(names) ;

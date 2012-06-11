@@ -1,6 +1,9 @@
 function plotQueryImage(imbd, res)
 % PLOTQUERYIMAGE  Plot the query image from a set of search results
-%   PLOTQUERYIMAGE(IMDB, RES)
+%   PLOTQUERYIMAGE(IMDB, RES) displays the query image for the set
+%   of search results RES.
+
+% Author: Andrea Vedaldi
 
 if numel(res.query.image) == 1
   ii = vl_binsearch(imdb.images.id, res.query.image) ;
