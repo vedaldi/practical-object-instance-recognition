@@ -1,7 +1,7 @@
 function res = search(imdb, query, varargin)
 % SEARCH  Search the image database
-%   RES = SEARCH(IMDB, QUERY)
-%
+%   RES = SEARCH(IMDB, QUERY) searches the image database IMDB for the
+%   query image QUERY returing a list of results RES.
 
 % Author: Andrea Vedaldi
 
@@ -83,29 +83,3 @@ res.geom.time = toc(res.geom.time) ;
 fprintf('search: feature time: %.3f s\n', res.features.time) ;
 fprintf('search: index time: %.3f s\n', res.index.time) ;
 fprintf('search: geometric verification time: %.3f s\n', res.geom.time) ;
-
-% --------------------------------------------------------------------
-%                                                        Visualization
-% --------------------------------------------------------------------
-
-if opts.verbose & 0
-
-  figure(2) ; clf ;
-  plotRetrievedImages(imdb, res.geom.score) ;
-
-  figure(3) ; clf ;
-  if ~exist('im', 'var')
-    ii = vl_binsearch(imdb.images.id, query) ;
-    im = imread(fullfile(imdb.dir, imdb.images.name{ii})) ;
-    rank = 2 ;
-  else
-    rank = 1 ;
-  end
-  ii = res.geom.perm(rank) ;
-  im0 = imread(fullfile(imdb.dir, imdb.images.name{ii})) ;
-  plotmatches(im,im0, ...
-              res.features.frames, ...
-              imdb.images.frames{ii}, ...
-              res.geom.matches{ii}) ;
-  if ~isempty(opts.box), plotbox(opts.box, 'linewidth', 3, 'color', 'b') ; hold on ; end
-end

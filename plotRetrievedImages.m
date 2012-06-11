@@ -24,7 +24,7 @@ clf ;
 for rank = 1:opts.num
   vl_tightsubplot(opts.num, rank) ;
   ii = perm(rank) ;
-  im0 = imread(fullfile(imdb.dir, imdb.images.name{ii})) ;
+  im0 = getImage(imdb, ii) ;
   data.h(rank) = imagesc(im0) ; axis image off ; hold on ;
   switch opts.labels(ii)
     case 0, cl = 'y' ;
@@ -47,6 +47,32 @@ data.res = res ;
 guidata(gcf, data) ;
 
 % --------------------------------------------------------------------
+function im = getImage(imdb, ii)
+% --------------------------------------------------------------------
+imPath = fullfile(imdb.dir, imdb.images.name{ii}) ;
+im = [] ;
+
+if exist(imPath, 'file'), im = imread(imPath) ; end
+
+if isempty(im) && isfield(imdb.images, 'wikiName')
+  name = imdb.images.wikiName{ii} ;
+  [~,~,url] = get_image_url(name) ;
+  fprintf('Downloading image ''%s'' (%s)\n', url, name) ;
+  if ~isempty(url)
+    im = imread(url) ;
+    width = size(im,1) ;
+    height = size(im,2) ;
+    scale = min([1, 1024/width, 1024/height]) ;
+    im = imresize(im, scale) ;
+  end
+end
+
+if isempty(im)
+  im = checkerboard(10,10) ;
+  warning('Could not retrieve image ''%s''', imdb.images.name{ii}) ;
+end
+
+% --------------------------------------------------------------------
 function zoomIn(h, event, data)
 % --------------------------------------------------------------------
 data = guidata(h) ;
@@ -64,7 +90,7 @@ end
 
 % get retrieved image
 ii = data.perm(rank) ;
-im2 = imread(fullfile(data.imdb.dir, data.imdb.images.name{ii})) ;
+im2 = getImage(data.imdb, ii) ;
 
 % plot matches
 figure(100) ; clf ;
@@ -72,3 +98,34 @@ plotMatches(im1,im2,...
             data.res.features.frames, ...
             data.imdb.images.frames{ii}, ...
             data.res.geom.matches{ii}) ;
+
+% if we have a wikipedia page, try opening the URL too
+if isfield(data.imdb.images, 'wikiName')
+  name = data.imdb.images.wikiName{ii} ;
+  [~,descrUrl] = get_image_url(name) ;
+  fprintf('Opening url %s\n', descrUrl) ;
+  web('url',descrUrl) ;
+  return ;
+end
+
+% --------------------------------------------------------------------
+function [comment, descUrl, imgUrl] = get_image_url(imgTitle)
+% --------------------------------------------------------------------
+
+content = urlread(['http://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&format=xml&iiprop=url|parsedcomment&iilimit=1&titles=' ...
+                   urlencode(imgTitle)]);
+
+% isolate the tag
+[s e] = regexp(content, '<ii .* />', 'start', 'end');
+iiTagContent = content(s:e);
+
+% comment attribute
+[s e] = regexp(iiTagContent, 'parsedcomment=".*" url', 'start', 'end');
+
+comment = iiTagContent(s + 15 : e - 5);
+
+[s e] = regexp(iiTagContent, 'url=".*" desc', 'start', 'end');
+imgUrl = iiTagContent(s + 5: e - 6);
+
+[s e] = regexp(iiTagContent, 'descriptionurl=".*" />', 'start', 'end');
+descUrl = iiTagContent(s + 16: e - 4);
