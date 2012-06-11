@@ -106,12 +106,12 @@ if ~exist('imdb', 'var')
                    'sqrtHistograms', true) ;
 end
 
-% Search for an image downloaded from the Internet in the database
-urls = {...
-  'https://docs.google.com/document/pubimage?id=1Ek4gU_c6Q4CQdzKLK71ZKEHK7a30wBIx9W4-Q7OnWsY&image_id=1wxWpxcP9Q6GcLIYpF6UugNklADC-b4Q', ...
-  'http://tourist-tracks.com/wp-content/uploads/2009/12/Oxfordweb.jpg' ...
-       } ;
-res = search(imdb, urls{1}, 'box', []) ;
+% Search the database for a match to a given image. Note that URL
+% can be a path to a file or a URL pointing to an image in the
+% Internet.
+
+url1 = 'data/queries/mistery-building1.jpg' ;
+res = search(imdb, url1, 'box', []) ;
 
 % Display the results
 figure(4) ; clf ; set(gcf,'name', 'Part III.D: query image') ;

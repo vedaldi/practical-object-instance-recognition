@@ -7,6 +7,8 @@ pack-data:
 	  data/oxbuild_lite \
 	  data/oxbuild_lite_imdb.mat \
 	  data/oxbuild_lite_imdb_100k_ellipse_hessian.mat \
+	  data/art_imdb_100k_disc_hessian.mat \
+	  data/queries \
 	  data/graf
 	rsync -v $(name)-data-only.tar.gz $(DST)
 

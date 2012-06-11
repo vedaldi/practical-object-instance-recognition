@@ -7,15 +7,16 @@ setup ;
 if ~exist('imdb', 'var')
   imdb = loadIndex('data/art_imdb_100k_disc_hessian.mat', ...
                    'sqrtHistograms', true) ;
+  imdb.dir = '' ; % art images are not shipped with practical
 end
 
-imdb.dir = '' ;
+% Search the database for a match to a given image. Note that URL
+% can be a path to a file or a URL pointing to an image in the
+% Internet.
 
-% Search for an image downloaded from the Internet in the database
-url1 = 'https://docs.google.com/document/pubimage?id=1Ek4gU_c6Q4CQdzKLK71ZKEHK7a30wBIx9W4-Q7OnWsY&image_id=1nykH4w2VTyRdkVe7-EGhxvkT7EdSSa8' ;
-url2 = 'https://docs.google.com/document/pubimage?id=1Ek4gU_c6Q4CQdzKLK71ZKEHK7a30wBIx9W4-Q7OnWsY&image_id=11-aYHsmyxh6g0_DbVaOpQgoZsMAtWzw' ;
-url3 = 'https://docs.google.com/document/pubimage?id=1Ek4gU_c6Q4CQdzKLK71ZKEHK7a30wBIx9W4-Q7OnWsY&image_id=1b3Q-NDcwA4TFNil7G672sT2yNqLiwtI' ;
-
+url1 = 'data/queries/mistery-painting1.jpg' ;
+url2 = 'data/queries/mistery-painting2.jpg' ;
+url3 = 'data/queries/mistery-painting3.jpg' ;
 res = search(imdb, url1, 'box', []) ;
 
 % Display the results
