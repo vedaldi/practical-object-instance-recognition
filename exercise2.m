@@ -34,7 +34,7 @@ for o = 1:2
 
     % Geometric verification
     inliers = geometricVerification(frames1,frames2,matches_2nn,...
-                                    'numRefinementIterations', 8) ;
+                                    'numRefinementIterations', 6) ;
     matches_geom = matches_2nn(:, inliers) ;
 
     % Count the number of inliers

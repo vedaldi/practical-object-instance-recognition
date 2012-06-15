@@ -86,7 +86,7 @@ title('Matches filtered by the second nearest neighbour test') ;
 %             Stage I.D: Better matching (ii) geometric transformation
 % --------------------------------------------------------------------
 
-inliers = geometricVerification(frames1, frames2, matches_2nn) ;
+inliers = geometricVerification(frames1, frames2, matches_2nn, 'numRefinementIterations', 8) ;
 matches_geo = matches_2nn(:, inliers) ;
 
 % Display the matches

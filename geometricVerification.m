@@ -8,10 +8,10 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 % Author: Andrea Vedaldi
 
   opts.tolerance1 = 20 ;
-  opts.tolerance2 = 15 ;
-  opts.tolerance3 = 20 ;
+  opts.tolerance2 = 20 ;
+  opts.tolerance3 = 10 ;
   opts.minInliers = 6 ;
-  opts.numRefinementIterations = 1 ;
+  opts.numRefinementIterations = 3 ;
   opts = vl_argparse(opts, varargin) ;
 
   numMatches = size(matches,2) ;
@@ -25,6 +25,10 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
   x1hom(end+1,:) = 1 ;
   x2hom(end+1,:) = 1 ;
 
+  % bad set of candidate inliers will produce a bad model, but
+  % this will be discared
+  warning('off','MATLAB:rankDeficientMatrix') ;
+
   for m = 1:numMatches
     for t = 1:opts.numRefinementIterations
       if t == 1
@@ -37,7 +41,7 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
         % affinity
         A21 = x2(:,inliers{m}) / x1hom(:,inliers{m}) ;
         x1p = A21(1:2,:) * x1hom ;
-        tol = opts.tolerance1 * sqrt(det(A21(1:2,1:2))) ;
+        tol = opts.tolerance2 * sqrt(det(A21(1:2,1:2))) ;
       else
         % homography
         x1in = x1hom(:,inliers{m}) ;
@@ -64,7 +68,7 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 
         x1phom = H21 * x1hom ;
         x1p = [x1phom(1,:) ./ x1phom(3,:) ; x1phom(2,:) ./ x1phom(3,:)] ;
-        tol = opts.tolerance1 * sqrt(det(H21(1:2,1:2))) ;
+        tol = opts.tolerance3 * sqrt(det(H21(1:2,1:2))) ;
       end
 
       dist2 = sum((x2 - x1p).^2,1) ;
