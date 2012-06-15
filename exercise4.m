@@ -3,8 +3,9 @@
 % setup MATLAB to use our software
 setup ;
 
-% Load the database if not already in memory
-if ~exist('imdb', 'var')
+% Load the database if not already in memory, or if the one
+% is from exercise3.
+if ~exist('imdb', 'var') || ~isfield(imdb.images,'wikiName')
   imdb = loadIndex('data/art_imdb_100k_disc_hessian.mat', ...
                    'sqrtHistograms', true) ;
   imdb.dir = '' ; % art images are not shipped with practical

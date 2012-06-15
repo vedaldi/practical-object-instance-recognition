@@ -72,8 +72,7 @@ res.geom.scores = res.index.scores ;
 res.geom.matches = cell(size(res.geom.scores)) ;
 for j = vl_colsubset(perm, imdb.shortListSize, 'beginning') ;
   if opts.skipGeometricVerification, continue ; end
-  [ok, matches] = ismember(res.features.words, imdb.images.words{j}) ;
-  matches = [find(ok) ; matches(ok)] ;
+  matches = matchWords(res.features.words, imdb.images.words{j}) ;
   inliers = geometricVerification(res.features.frames, imdb.images.frames{j}, matches) ;
   res.geom.matches{j} = matches(:, inliers) ;
   res.geom.scores(j) = max(res.geom.scores(j), numel(inliers)) ;

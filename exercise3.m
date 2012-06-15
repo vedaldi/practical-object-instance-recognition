@@ -36,8 +36,7 @@ time_raw = toc ;
 
 % Get the matches based on the quantized descriptors
 tic ;
-[ok, matches] = ismember(words1, words2) ;
-matches_word = [find(ok) ; matches(ok)] ;
+matches_word = matchWords(words1,words2) ;
 time_word = toc;
 
 % Count inliers
@@ -83,8 +82,7 @@ fprintf('Search time per database image: %.3g s\n', time_index / size(imdb.index
 
 [~, perm] = sort(scores, 'descend') ;
 for rank = 1:25
-  [ok, matches] = ismember(words, imdb.images.words{perm(rank)}) ;
-  matches = [find(ok) ; matches(ok)] ;
+  matches = matchWords(words,imdb.images.words{perm(rank)}) ;
   inliers = geometricVerification(frames,imdb.images.frames{perm(rank)},...
                                   matches,'numRefinementIterations', 3) ;
   newScore = numel(inliers) ;
@@ -100,8 +98,9 @@ set(gcf,'name', 'III.B: Searching with an inverted index - verification') ;
 %                                             Stage III.D: Full system
 % --------------------------------------------------------------------
 
-% Load the database if not already in memory
-if ~exist('imdb', 'var')
+% Load the database if not already in memory or if it is the one
+% from exercise4
+if ~exist('imdb', 'var') || isfield(imdb.images, 'wikiNames')
   imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat', ...
                    'sqrtHistograms', true) ;
 end
