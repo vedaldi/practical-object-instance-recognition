@@ -78,6 +78,12 @@ ok = ratio2 <= nnThreshold^2 ;
 % Construct a list of filtered matches
 matches_2nn = [find(ok) ; nn(1, ok)] ;
 
+% Alternatively, do not do the second nearest neighbourhod test.
+% Instead, match each feature to its two closest neighbours and let
+% the geometric verification step figure it out.
+
+% matches_2nn = [1:size(nn,2), 1:size(nn,2) ; nn(1,:), nn(2,:)] ;
+
 % Display the matches
 figure(5) ; clf ;
 set(gcf,'name', 'Part I.C: SIFT descriptors - Lowe''s test') ;
