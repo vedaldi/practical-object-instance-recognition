@@ -11,19 +11,12 @@ setup ;
 load('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat', 'vocab', 'kdtree') ;
 
 % Load the two images
-%im1 = imread('data/oxbuild_lite/all_souls_000002.jpg') ;
-%im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
 im1 = imread('data/oxbuild_lite/ashmolean_000007.jpg') ;
 im2 = imread('data/oxbuild_lite/ashmolean_000028.jpg') ;
-
 
 % Compute SIFT features for each
 [frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.001, 'orientation', false) ;
 [frames2, descrs2] = getFeatures(im2, 'peakThreshold', 0.001, 'orientation', false) ;
-
-% Quantise the descritpors
-words1 = vl_kdtreequery(kdtree, vocab, descrs1, 'maxNumComparisons', 1024) ;
-words2 = vl_kdtreequery(kdtree, vocab, descrs2, 'maxNumComparisons', 1024) ;
 
 % Get the matches based on the raw descriptors
 tic ;
@@ -33,6 +26,10 @@ ratio2 = dist2(1,:) ./ dist2(2,:) ;
 ok = ratio2 <= nnThreshold^2 ;
 matches_raw = [find(ok) ; nn(1,ok)] ;
 time_raw = toc ;
+
+% Quantise the descritpors
+words1 = vl_kdtreequery(kdtree, vocab, descrs1, 'maxNumComparisons', 1024) ;
+words2 = vl_kdtreequery(kdtree, vocab, descrs2, 'maxNumComparisons', 1024) ;
 
 % Get the matches based on the quantized descriptors
 tic ;
