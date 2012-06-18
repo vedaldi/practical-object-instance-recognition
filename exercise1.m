@@ -11,7 +11,7 @@ setup ;
 im1 = imread('data/oxbuild_lite/all_souls_000002.jpg') ;
 
 % Let the second image be a rotated and scaled version of the first
-im3 = imrotate(im1,35,'bilinear') ;
+im3 = imresize(imrotate(im1,35,'bilinear'),0.7) ;
 
 % Compute SIFT features for each
 [frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.001) ;
@@ -47,6 +47,8 @@ set(gcf,'name', 'Part I.B: SIFT descriptors') ;
 imagesc(im1) ; axis equal off ;
 vl_plotsiftdescriptor(descrs1(:,1:50:end), ...
                       frames1(:,1:50:end)) ;
+hold on ;
+vl_plotframe(frames1(:,1:50:end)) ;
 
 % Find for each desriptor in im1 the closest descriptor in im2
 nn = findNeighbours(descrs1, descrs2) ;
