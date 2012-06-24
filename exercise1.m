@@ -3,7 +3,7 @@
 % setup MATLAB to use our software
 setup ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %                                   Stage I.A: SIFT features detection
 % --------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ vl_plotframe(frames1, 'linewidth', 2) ;
 subplot(1,2,2) ; imagesc(im2) ; axis equal off ; hold on ;
 vl_plotframe(frames2, 'linewidth', 2) ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %     Stage I.B: SIFT features descriptors and matching between images
 % --------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ set(gcf,'name', 'Part I.B: SIFT descriptors - matching') ;
 plotMatches(im1,im2,frames1,frames2,matches) ;
 title('Nearest neighbour matches') ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %  Stage I.C: Better matching (i) Lowe's second nearest neighbour test
 % --------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ set(gcf,'name', 'Part I.C: SIFT descriptors - Lowe''s test') ;
 plotMatches(im1,im2,frames1,frames2,matches_2nn) ;
 title('Matches filtered by the second nearest neighbour test') ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %             Stage I.D: Better matching (ii) geometric transformation
 % --------------------------------------------------------------------
 

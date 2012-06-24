@@ -3,7 +3,7 @@
 % setup MATLAB to use our software
 setup ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %      Stage III.A: Accelerating descriptor matching with visual words
 % --------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ title(sprintf('Verified matches on raw descritpors (%d in %.3g s)',numel(inliers
 subplot(2,1,2) ; plotMatches(im1,im2,frames1,frames2,matches_word(:,inliers_word)) ;
 title(sprintf('Verified matches on visual words (%d in %.3g s)',numel(inliers_word),time_word)) ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %                        Stage III.B: Searching with an inverted index
 % --------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ plotRetrievedImages(imdb, scores, 'num', 25) ;
 set(gcf,'name', 'III.B: Searching with an inverted index') ;
 fprintf('Search time per database image: %.3g s\n', time_index / size(imdb.index,2)) ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %                                    Stage III.C: Geometric rearanking
 % --------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ figure(3) ; clf ;
 plotRetrievedImages(imdb, scores, 'num', 25) ;
 set(gcf,'name', 'III.B: Searching with an inverted index - verification') ;
 
-% --------------------------------------------------------------------
+%% -------------------------------------------------------------------
 %                                             Stage III.D: Full system
 % --------------------------------------------------------------------
 
