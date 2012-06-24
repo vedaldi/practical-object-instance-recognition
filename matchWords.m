@@ -9,6 +9,14 @@ function matches = matchWords(a, b)
 
 % Author: Andrea Vedaldli
 
+a = single(a) ;
+b = single(b) ;
+
+% Exclude words which are too common
+a(count(a) > 5) = NaN ;
+b(count(b) > 5) = NaN ;
+
+% Now establish matches between the remaining features
 maxNumMatches = 1 ;
 
 for i=1:maxNumMatches
@@ -17,3 +25,8 @@ for i=1:maxNumMatches
   b(m(ok)) = NaN ;
 end
 matches = cat(2, matches{:}) ;
+
+function c = count(a)
+[values,~,map] = unique(a) ;
+c = hist(a, values) ;
+c = c(map) ;

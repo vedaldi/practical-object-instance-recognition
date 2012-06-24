@@ -8,8 +8,8 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 % Author: Andrea Vedaldi
 
   opts.tolerance1 = 20 ;
-  opts.tolerance2 = 20 ;
-  opts.tolerance3 = 10 ;
+  opts.tolerance2 = 15 ;
+  opts.tolerance3 = 8 ;
   opts.minInliers = 6 ;
   opts.numRefinementIterations = 3 ;
   opts = vl_argparse(opts, varargin) ;
@@ -36,12 +36,12 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
         A2 = toAffinity(f2(:,matches(2,m))) ;
         A21 = A2 * inv(A1) ;
         x1p = A21(1:2,:) * x1hom ;
-        tol = opts.tolerance1 * sqrt(det(A21(1:2,1:2))) ;
+        tol = opts.tolerance1 ;
       elseif t <= 4
         % affinity
         A21 = x2(:,inliers{m}) / x1hom(:,inliers{m}) ;
         x1p = A21(1:2,:) * x1hom ;
-        tol = opts.tolerance2 * sqrt(det(A21(1:2,1:2))) ;
+        tol = opts.tolerance2 ;
       else
         % homography
         x1in = x1hom(:,inliers{m}) ;
@@ -68,7 +68,7 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 
         x1phom = H21 * x1hom ;
         x1p = [x1phom(1,:) ./ x1phom(3,:) ; x1phom(2,:) ./ x1phom(3,:)] ;
-        tol = opts.tolerance3 * sqrt(det(H21(1:2,1:2))) ;
+        tol = opts.tolerance3 ;
       end
 
       dist2 = sum((x2 - x1p).^2,1) ;
@@ -87,9 +87,16 @@ function C = centering(x)
 % --------------------------------------------------------------------d
   T = [eye(2), - mean(x(1:2,:),2) ; 0 0 1] ;
   x = T * x ;
-  S = [1 ./ std(x(1,:)) 0 0 ;
-       0 1 ./ std(x(2,:)) 0 ;
-       0 0 1] ;
+  std1 = std(x(1,:)) ;
+  std2 = std(x(2,:)) ;
+
+  % at least one pixel apart to avoid numerical problems
+  std1 = max(std1, 1) ;
+  std2 = max(std2, 1) ;
+
+  S = [1/std1 0 0 ;
+       0 1/std2 0 ;
+       0 0      1] ;
   C = S * T ;
 end
 
