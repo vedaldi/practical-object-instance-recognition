@@ -27,7 +27,7 @@ ok = ratio2 <= nnThreshold^2 ;
 matches_raw = [find(ok) ; nn(1,ok)] ;
 time_raw = toc ;
 
-% Quantise the descritpors
+% Quantise the descriptors
 words1 = vl_kdtreequery(kdtree, vocab, descrs1, 'maxNumComparisons', 1024) ;
 words2 = vl_kdtreequery(kdtree, vocab, descrs2, 'maxNumComparisons', 1024) ;
 
@@ -44,7 +44,7 @@ figure(1) ; clf ;
 set(gcf,'name', 'III.B: Accelerating descriptor matching with visual words') ;
 
 subplot(2,1,1) ; plotMatches(im1,im2,frames1,frames2,matches_raw(:,inliers_raw)) ;
-title(sprintf('Verified matches on raw descritpors (%d in %.3g s)',numel(inliers_raw),time_raw)) ;
+title(sprintf('Verified matches on raw descriptors (%d in %.3g s)',numel(inliers_raw),time_raw)) ;
 
 subplot(2,1,2) ; plotMatches(im1,im2,frames1,frames2,matches_word(:,inliers_word)) ;
 title(sprintf('Verified matches on visual words (%d in %.3g s)',numel(inliers_word),time_word)) ;
@@ -71,7 +71,7 @@ set(gcf,'name', 'III.B: Searching with an inverted index') ;
 fprintf('Search time per database image: %.3g s\n', time_index / size(imdb.index,2)) ;
 
 % --------------------------------------------------------------------
-%                                    Stage III.C: Geometric rearanking
+%                                    Stage III.C: Geometric reranking
 % --------------------------------------------------------------------
 
 % Rescore the top 16 images based on the number of
