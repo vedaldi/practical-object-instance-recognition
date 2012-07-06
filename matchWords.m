@@ -7,7 +7,7 @@ function matches = matchWords(a, b)
 %   By default, if an element of A matches to more than one element of
 %   B, only one of the possible matches is generated.
 
-% Author: Andrea Vedaldli
+% Author: Andrea Vedaldi
 
 a = single(a) ;
 b = single(b) ;
