@@ -13,11 +13,17 @@ im1 = imread('data/oxbuild_lite/all_souls_000002.jpg') ;
 % Let the second image be a rotated and scaled version of the first
 im3 = imresize(imrotate(im1,35,'bilinear'),0.7) ;
 
+% Display the images
+figure(1) ;
+set(gcf,'name', 'Part I.A: Original image and rotated and scaled version') ;
+subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
+subplot(1,2,2) ; imagesc(im3) ; axis equal off ;
+
 % Compute SIFT features for each
 [frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.001) ;
 [frames3, descrs3] = getFeatures(im3, 'peakThreshold', 0.001) ;
 
-figure(1) ;
+figure(2) ;
 set(gcf,'name', 'Part I.A: SIFT features detection - synthetic pair') ;
 subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
 vl_plotframe(frames1, 'linewidth', 2) ;
@@ -27,9 +33,16 @@ vl_plotframe(frames3, 'linewidth', 2) ;
 
 % Load a second image of the same scene
 im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
+
+% Display the images
+figure(3) ;
+set(gcf,'name', 'Part I.A: Original images - real pair') ;
+subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
+subplot(1,2,2) ; imagesc(im2) ; axis equal off ;
+
 [frames2, descrs2] = getFeatures(im2, 'peakThreshold', 0.001) ;
 
-figure(2) ;
+figure(4) ;
 set(gcf,'name', 'Part I.A: SIFT features detection - real pair') ;
 subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
 vl_plotframe(frames1, 'linewidth', 2) ;
@@ -42,7 +55,7 @@ vl_plotframe(frames2, 'linewidth', 2) ;
 % --------------------------------------------------------------------
 
 % Visualize SIFT descriptors (only a few)
-figure(3) ; clf ;
+figure(5) ; clf ;
 set(gcf,'name', 'Part I.B: SIFT descriptors') ;
 imagesc(im1) ; axis equal off ;
 vl_plotsiftdescriptor(descrs1(:,1:50:end), ...
@@ -50,7 +63,7 @@ vl_plotsiftdescriptor(descrs1(:,1:50:end), ...
 hold on ;
 vl_plotframe(frames1(:,1:50:end)) ;
 
-% Find for each desriptor in im1 the closest descriptor in im2
+% Find for each descriptor in im1 the closest descriptor in im2
 nn = findNeighbours(descrs1, descrs2) ;
 
 % Construct a matrix of matches. Each column stores two index of
@@ -58,7 +71,7 @@ nn = findNeighbours(descrs1, descrs2) ;
 matches = [1:size(descrs1,2) ; nn(1,:)] ;
 
 % Display the matches
-figure(4) ; clf ;
+figure(6) ; clf ;
 set(gcf,'name', 'Part I.B: SIFT descriptors - matching') ;
 plotMatches(im1,im2,frames1,frames2,matches) ;
 title('Nearest neighbour matches') ;
@@ -78,14 +91,14 @@ ok = ratio2 <= nnThreshold^2 ;
 % Construct a list of filtered matches
 matches_2nn = [find(ok) ; nn(1, ok)] ;
 
-% Alternatively, do not do the second nearest neighbourhod test.
+% Alternatively, do not do the second nearest neighbourhood test.
 % Instead, match each feature to its two closest neighbours and let
-% the geometric verification step figure it out.
+% the geometric verification step figure it out (in stage I.D below).
 
 % matches_2nn = [1:size(nn,2), 1:size(nn,2) ; nn(1,:), nn(2,:)] ;
 
 % Display the matches
-figure(5) ; clf ;
+figure(7) ; clf ;
 set(gcf,'name', 'Part I.C: SIFT descriptors - Lowe''s test') ;
 plotMatches(im1,im2,frames1,frames2,matches_2nn) ;
 title('Matches filtered by the second nearest neighbour test') ;
@@ -98,7 +111,7 @@ inliers = geometricVerification(frames1, frames2, matches_2nn, 'numRefinementIte
 matches_geo = matches_2nn(:, inliers) ;
 
 % Display the matches
-figure(6) ; clf ;
+figure(8) ; clf ;
 set(gcf,'name', 'Part I.D: SIFT descriptors - geometric verification') ;
 plotMatches(im1,im2,frames1,frames2,matches_geo) ;
 title('Matches filtered by geometric verification') ;
