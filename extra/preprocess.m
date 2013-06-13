@@ -105,9 +105,10 @@ function setupOxford5k(imdb, prefix, suffix, numWords, featureOpts)
   % ------------------------------------------------------------------
   %                                      Compute the visual vocabulary
   % ------------------------------------------------------------------
-  descrs = cell(1,numel(imdb.images.name)) ;
-  numWordsPerImage = ceil(imdb.numWords * 10 / numel(imdb.images.name)) ;
-  parfor i = 1:numel(imdb.images.name)
+  n = numel(imdb.images.name) ;
+  descrs = cell(1,n) ;
+  numWordsPerImage = ceil(imdb.numWords * 10 / n) ;
+  parfor i = 1:n
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
     [~,descrs{i}] = getFeatures(imread(fullfile(imdb.dir, imdb.images.name{i})), ...
                                 imdb.featureOpts{:}) ;
@@ -128,7 +129,7 @@ function setupOxford5k(imdb, prefix, suffix, numWords, featureOpts)
   %                                                 Compute the features
   % --------------------------------------------------------------------
   clear frames words ;
-  parfor i = 1:numel(imdb.images.name)
+  parfor i = 1:n
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
     [frames{i},descrs] = getFeatures(imread(...
       fullfile(imdb.dir, imdb.images.name{i})), imdb.featureOpts{:}) ;
