@@ -54,7 +54,7 @@ title(sprintf('Verified matches on visual words (%d in %.3g s)',numel(inliers_wo
 % --------------------------------------------------------------------
 
 % Load an image DB
-imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat') ;
+imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_dog.mat') ;
 
 % Compute a histogram for the query image
 [h,frames,words] = getHistogramFromImage(imdb, im2) ;
@@ -98,7 +98,7 @@ set(gcf,'name', 'III.B: Searching with an inverted index - verification') ;
 % Load the database if not already in memory or if it is the one
 % from exercise4
 if ~exist('imdb', 'var') || isfield(imdb.images, 'wikiNames')
-  imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat', ...
+  imdb = loadIndex('data/oxbuild_lite_imdb_100k_ellipse_dog.mat', ...
                    'sqrtHistograms', true) ;
 end
 
