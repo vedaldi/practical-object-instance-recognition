@@ -16,6 +16,6 @@ cla ;
 imagesc(im) ; hold on ;
 axis image off ;
 if ~isempty(res.query.box)
-  plotbox(res.query.box, 'linewidth', 2, 'color', 'b') ;
+  vl_plotbox(res.query.box, 'linewidth', 2, 'color', 'b') ;
 end
 title('Query imge') ;
