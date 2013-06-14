@@ -17,7 +17,7 @@ function [frames, descrs] = getFeatures(im, varargin)
 
 % Author: Andrea Vedaldi
 
-opts.method = 'hessian' ;
+opts.method = 'dog' ;
 opts.affineAdaptation = false ;
 opts.orientation = true ;
 opts.peakThreshold = 28 / 256^2 ;
