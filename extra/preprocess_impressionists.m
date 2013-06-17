@@ -15,21 +15,21 @@ function preprocess_impressionists()
   for t = [1 3]
     switch t
       case 1
-        suffix = '100k_disc_hessian' ;
+        suffix = '100k_disc_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', false, 'orientation', false} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', false, 'orientation', false} ;
       case 2
-        suffix = '100k_odisc_hessian' ;
+        suffix = '100k_odisc_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', false, 'orientation', true} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', false, 'orientation', true} ;
       case 3
-        suffix = '100k_ellipse_hessian' ;
+        suffix = '100k_ellipse_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', true, 'orientation', false} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', true, 'orientation', false} ;
       case 4
-        suffix = '100k_oellipse_hessian' ;
+        suffix = '100k_oellipse_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', true, 'orientation', true} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', true, 'orientation', true} ;
     end
     setupArt(imdb, prefix, suffix, numWords, featureOpts) ;
   end

@@ -7,10 +7,10 @@ function preprocess()
   %                                                      Download VLFeat
   % --------------------------------------------------------------------
   if ~exist('vlfeat', 'dir')
-    from = 'http://www.vlfeat.org/sandbox/download/vlfeat-0.9.15-bin.tar.gz' ;
+    from = 'http://www.vlfeat.org/sandbox/download/vlfeat-0.9.17-bin.tar.gz' ;
     fprintf('Downloading vlfeat from %s\n', from) ;
     untar(from, 'data') ;
-    movefile('data/vlfeat-0.9.15', 'vlfeat') ;
+    movefile('data/vlfeat-0.9.17', 'vlfeat') ;
   end
 
   setup ;
@@ -25,21 +25,21 @@ function preprocess()
   for t = [1 3]
     switch t
       case 1
-        suffix = '100k_disc_hessian' ;
+        suffix = '100k_disc_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', false, 'orientation', false} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', false, 'orientation', false} ;
       case 2
-        suffix = '100k_odisc_hessian' ;
+        suffix = '100k_odisc_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', false, 'orientation', true} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', false, 'orientation', true} ;
       case 3
-        suffix = '100k_ellipse_hessian' ;
+        suffix = '100k_ellipse_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', true, 'orientation', false} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', true, 'orientation', false} ;
       case 4
-        suffix = '100k_oellipse_hessian' ;
+        suffix = '100k_oellipse_dog' ;
         numWords = 100e3 ;
-        featureOpts = {'method', 'hessian', 'affineAdaptation', true, 'orientation', true} ;
+        featureOpts = {'method', 'dog', 'affineAdaptation', true, 'orientation', true} ;
     end
     setupOxford5k(imdb, prefix, suffix, numWords, featureOpts) ;
   end
@@ -105,9 +105,10 @@ function setupOxford5k(imdb, prefix, suffix, numWords, featureOpts)
   % ------------------------------------------------------------------
   %                                      Compute the visual vocabulary
   % ------------------------------------------------------------------
-  descrs = cell(1,numel(imdb.images.name)) ;
-  numWordsPerImage = ceil(imdb.numWords * 10 / numel(imdb.images.name)) ;
-  parfor i = 1:numel(imdb.images.name)
+  n = numel(imdb.images.name) ;
+  descrs = cell(1,n) ;
+  numWordsPerImage = ceil(imdb.numWords * 10 / n) ;
+  parfor i = 1:n
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
     [~,descrs{i}] = getFeatures(imread(fullfile(imdb.dir, imdb.images.name{i})), ...
                                 imdb.featureOpts{:}) ;
@@ -128,7 +129,7 @@ function setupOxford5k(imdb, prefix, suffix, numWords, featureOpts)
   %                                                 Compute the features
   % --------------------------------------------------------------------
   clear frames words ;
-  parfor i = 1:numel(imdb.images.name)
+  parfor i = 1:n
     fprintf('get features from %i, %s\n', i, imdb.images.name{i}) ;
     [frames{i},descrs] = getFeatures(imread(...
       fullfile(imdb.dir, imdb.images.name{i})), imdb.featureOpts{:}) ;

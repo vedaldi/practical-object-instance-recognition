@@ -77,7 +77,7 @@ plotMatches(im1,im2,frames1,frames2,matches) ;
 title('Nearest neighbour matches') ;
 
 %% -------------------------------------------------------------------
-%  Stage I.C: Better matching (i) Lowe's second nearest neighbour test
+%   Stage I.C: Better matching w/ Lowe's second nearest neighbour test
 % --------------------------------------------------------------------
 
 % Find the top two neighbours as well as their distances
@@ -104,7 +104,7 @@ plotMatches(im1,im2,frames1,frames2,matches_2nn) ;
 title('Matches filtered by the second nearest neighbour test') ;
 
 %% -------------------------------------------------------------------
-%             Stage I.D: Better matching (ii) geometric transformation
+%               Stage I.D: Better matching w/ geometric transformation
 % --------------------------------------------------------------------
 
 inliers = geometricVerification(frames1, frames2, matches_2nn, 'numRefinementIterations', 8) ;

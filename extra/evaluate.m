@@ -7,10 +7,10 @@ switch 13
   case 2, imdbPath = 'data/oxbuild_imdb_100k_odisc.mat' ;
   case 3, imdbPath = 'data/oxbuild_imdb_100k_ellipse.mat' ;
   case 4, imdbPath = 'data/oxbuild_imdb_100k_oellipse.mat' ;
-  case 11, imdbPath = 'data/oxbuild_imdb_100k_disc_hessian2.mat' ;
-  case 12, imdbPath = 'data/oxbuild_imdb_100k_odisc_hessian.mat' ;
-  case 13, imdbPath = 'data/oxbuild_imdb_100k_ellipse_hessian2.mat' ;
-  case 14, imdbPath = 'data/oxbuild_imdb_100k_oellipse_hessian.mat' ;
+  case 11, imdbPath = 'data/oxbuild_imdb_100k_disc_dog2.mat' ;
+  case 12, imdbPath = 'data/oxbuild_imdb_100k_odisc_dog.mat' ;
+  case 13, imdbPath = 'data/oxbuild_imdb_100k_ellipse_dog2.mat' ;
+  case 14, imdbPath = 'data/oxbuild_imdb_100k_oellipse_dog.mat' ;
 end
 imdb = loadIndex(imdbPath, 'sqrtHistograms', false, 'shortListSize', 200) ;
 

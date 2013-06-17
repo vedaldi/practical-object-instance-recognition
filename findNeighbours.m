@@ -15,7 +15,8 @@ function [nn, dist2] = findNeighbours(descrs1, descrs2, numNeighbours)
 % Authors: Andrea Vedaldi
 
 if nargin <= 2, numNeighbours = 1 ; end
-tree = vl_kdtreebuild(descrs2,'numTrees',1) ;
+vl_twister('state',0) ;
+tree = vl_kdtreebuild(descrs2,'numTrees',3) ;
 [nn, dist2] = vl_kdtreequery(tree, descrs2, descrs1, ...
-                             'maxNumComparisons', 20, ...
+                             'maxNumComparisons', 40, ...
                              'numNeighbors', numNeighbours) ;
