@@ -37,20 +37,22 @@ data/graf
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
 
-prepack:
+pack:
 	rm -rf data/$(name)
 	mkdir -p data/$(name)/data
-
-pack: prepack
 	ln -sft data/$(name)/data/ $(data)
 	ln -sft data/$(name)/ $(code)
 	tar -C data -czvhf data/$(name).tar.gz $(name)/
 
-pack-data: prepack
+pack-data:
+	rm -rf data/$(name)
+	mkdir -p data/$(name)/data
 	ln -sft data/$(name)/data/ $(data)
 	tar -C data -czvhf data/$(name)-data-only.tar.gz $(name)/
 
-pack-code: prepack
+pack-code:
+	rm -rf data/$(name)
+	mkdir -p data/$(name)/data
 	ln -sft data/$(name)/ $(code)
 	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/
 
