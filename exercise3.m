@@ -8,7 +8,7 @@ setup ;
 % --------------------------------------------------------------------
 
 % Load a visual word vocabulary
-load('data/oxbuild_lite_imdb_100k_ellipse_hessian.mat', 'vocab', 'kdtree') ;
+load('data/oxbuild_lite_imdb_100k_ellipse_dog.mat', 'vocab', 'kdtree') ;
 
 % Load the two images
 im1 = imread('data/oxbuild_lite/ashmolean_000007.jpg') ;
