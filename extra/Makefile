@@ -37,31 +37,32 @@ data/graf
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
 
-prepack:
+pack:
 	rm -rf data/$(name)
 	mkdir -p data/$(name)/data
-
-pack: prepack
 	ln -sft data/$(name)/data/ $(data)
 	ln -sft data/$(name)/ $(code)
-	tar -C data -czvhf $(name).tar.gz $(name)/
+	tar -C data -czvhf data/$(name).tar.gz $(name)/
 
-pack-data: prepack
+pack-data:
+	rm -rf data/$(name)
+	mkdir -p data/$(name)/data
 	ln -sft data/$(name)/data/ $(data)
-	tar -C data -czvhf $(name)-data-only.tar.gz $(name)/
+	tar -C data -czvhf data/$(name)-data-only.tar.gz $(name)/
 
-pack-code: prepack
+pack-code:
+	rm -rf data/$(name)
+	mkdir -p data/$(name)/data
 	ln -sft data/$(name)/ $(code)
-	tar -C data -czvhf $(name)-code-only.tar.gz $(name)/
+	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/
 
 post: pack-all
-	rsync -v data/$(name).tar.gz $(DST)
-	rsync -v data/$(name)-data-only.tar.gz $(DST)
-	rsync -v data/$(name)-code-only.tar.gz $(DST)
+	rsync -v data/$(name).tar.gz $(DST)/
+	rsync -v data/$(name)-data-only.tar.gz $(DST)/
+	rsync -v data/$(name)-code-only.tar.gz $(DST)/
 
 clean:
 	find -name '*~' -delete
 
 distclean: clean
 	rm -f data/$(name)*.tar.gz
-

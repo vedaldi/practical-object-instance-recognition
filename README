@@ -1,4 +1,4 @@
-                       INSTANCE SEARCH PRACTICAL
+                 OBJECT INSTANCE RECOGNITION PRACTICAL
                    Andrea Vedaldi  Andrew Zisserman
                      {vedaldi,az}@robots.ox.ac.uk
 
@@ -49,18 +49,24 @@ search.m
         Search an image database.
 
 setup.m
-        Setup MALTAB to use our software.
+        Setup MALTAB to use the required libraries.
 
 
-APPENDX (INSTALLATION):
+APPENDX - INSTALLING FROM SCRATCH:
 
 Run MATLAB and execute the command PREPROCESS() in extra/. This will
 download the VLFeat library (http://www.vlfeat.org), then, it will
 compute a visual vocabulary and features for standard datasets.
 
+CHANGES:
+
+2013a - Improves documentation, uses last version of VLFeat, bugfixes.
+2012  - Adds co-varaint feature detectors
+2011  - Initial edition
+
 LICENSE:
 
-Copyright (c) 2011 Andrea Vedaldi and Andrew Zisserman
+Copyright (c) 2011-13 Andrea Vedaldi and Andrew Zisserman
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -80,3 +86,4 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
