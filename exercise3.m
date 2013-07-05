@@ -37,16 +37,16 @@ matches_word = matchWords(words1,words2) ;
 time_word = toc;
 
 % Count inliers
-inliers_raw = geometricVerification(frames1,frames2,matches_raw,'numRefinementIterations', 3) ;
-inliers_word = geometricVerification(frames1,frames2,matches_word,'numRefinementIterations', 3) ;
+[inliers_raw, H_raw] = geometricVerification(frames1,frames2,matches_raw,'numRefinementIterations', 3) ;
+[inliers_word, H_word] = geometricVerification(frames1,frames2,matches_word,'numRefinementIterations', 3) ;
 
 figure(1) ; clf ;
 set(gcf,'name', 'III.B: Accelerating descriptor matching with visual words') ;
 
-subplot(2,1,1) ; plotMatches(im1,im2,frames1,frames2,matches_raw(:,inliers_raw)) ;
+subplot(2,1,1) ; plotMatches(im1,im2,frames1,frames2,matches_raw(:,inliers_raw), 'homography', H_raw) ;
 title(sprintf('Verified matches on raw descriptors (%d in %.3g s)',numel(inliers_raw),time_raw)) ;
 
-subplot(2,1,2) ; plotMatches(im1,im2,frames1,frames2,matches_word(:,inliers_word)) ;
+subplot(2,1,2) ; plotMatches(im1,im2,frames1,frames2,matches_word(:,inliers_word), 'homography', H_word) ;
 title(sprintf('Verified matches on visual words (%d in %.3g s)',numel(inliers_word),time_word)) ;
 
 %% -------------------------------------------------------------------

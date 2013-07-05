@@ -33,8 +33,8 @@ for o = 1:2
     matches_2nn = [find(ok) ; nn(1,ok)] ;
 
     % Geometric verification
-    inliers = geometricVerification(frames1,frames2,matches_2nn,...
-                                    'numRefinementIterations', 6) ;
+    [inliers, H] = geometricVerification(frames1,frames2,matches_2nn,...
+                                         'numRefinementIterations', 6) ;
     matches_geom = matches_2nn(:, inliers) ;
 
     % Count the number of inliers
@@ -53,7 +53,8 @@ for o = 1:2
 
     figure(n) ; clf ;
     set(gcf, 'name', sprintf('Part II:  Affine co-variant detectors - from 1 to %d with %s', t,type)) ;
-    c = copyobj(h, gcf) ; set(c, 'position', [0 0 1 1]) ;
+    plotMatches(im1,im2,frames1,frames2,matches_geom,'homography',H) ;
+    %c = copyobj(h, gcf) ; set(c, 'position', [0 0 1 1]) ;
     drawnow ;
   end
 end

@@ -107,11 +107,11 @@ title('Matches filtered by the second nearest neighbour test') ;
 %               Stage I.D: Better matching w/ geometric transformation
 % --------------------------------------------------------------------
 
-inliers = geometricVerification(frames1, frames2, matches_2nn, 'numRefinementIterations', 8) ;
+[inliers, H] = geometricVerification(frames1, frames2, matches_2nn, 'numRefinementIterations', 8) ;
 matches_geo = matches_2nn(:, inliers) ;
 
 % Display the matches
 figure(8) ; clf ;
 set(gcf,'name', 'Part I.D: SIFT descriptors - geometric verification') ;
-plotMatches(im1,im2,frames1,frames2,matches_geo) ;
+plotMatches(im1,im2,frames1,frames2,matches_geo, 'homography', H) ;
 title('Matches filtered by geometric verification') ;

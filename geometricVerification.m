@@ -1,4 +1,4 @@
-function inliers = geometricVerification(f1, f2, matches, varargin)
+function [inliers, H] = geometricVerification(f1, f2, matches, varargin)
 % GEOMETRICVERIFICATION  Verify feature matches based on geomeyry
 %   OK = GEOMETRICVERIFICATION(F1, F2, MATCHES) check for geomeric
 %   consistency the matches MATCHES between feature frames F1 and F2
@@ -16,6 +16,7 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 
   numMatches = size(matches,2) ;
   inliers = cell(1, numMatches) ;
+  H = cell(1, numMatches) ;
 
   x1 = double(f1(1:2, matches(1,:))) ;
   x2 = double(f2(1:2, matches(2,:))) ;
@@ -34,13 +35,14 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
       if t == 1
         A1 = toAffinity(f1(:,matches(1,m))) ;
         A2 = toAffinity(f2(:,matches(2,m))) ;
-        A21 = A2 * inv(A1) ;
-        x1p = A21(1:2,:) * x1hom ;
+        H21 = A2 * inv(A1) ;
+        x1p = H21(1:2,:) * x1hom ;
         tol = opts.tolerance1 ;
       elseif t <= 4
         % affinity
-        A21 = x2(:,inliers{m}) / x1hom(:,inliers{m}) ;
-        x1p = A21(1:2,:) * x1hom ;
+        H21 = x2(:,inliers{m}) / x1hom(:,inliers{m}) ;
+        x1p = H21(1:2,:) * x1hom ;
+        H21(3,:) = [0 0 1] ;
         tol = opts.tolerance2 ;
       else
         % homography
@@ -73,6 +75,7 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
 
       dist2 = sum((x2 - x1p).^2,1) ;
       inliers{m} = find(dist2 < tol^2) ;
+      H{m} = H21 ;
       if numel(inliers{m}) < opts.minInliers, break ; end
       if numel(inliers{m}) > 0.7 * size(matches,2), break ; end % enoguh!
     end
@@ -80,6 +83,7 @@ function inliers = geometricVerification(f1, f2, matches, varargin)
   scores = cellfun(@numel, inliers) ;
   [~, best] = max(scores) ;
   inliers = inliers{best} ;
+  H = inv(H{best}) ;
 end
 
 % --------------------------------------------------------------------
