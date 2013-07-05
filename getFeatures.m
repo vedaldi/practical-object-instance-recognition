@@ -1,4 +1,4 @@
-function [frames, descrs] = getFeatures(im, varargin)
+function [frames, descrs, im] = getFeatures(im, varargin)
 % GETFEATURES  Extract feature frames (keypoints) and descriptors
 %   [FRAMES, DESCRS] = GETFEATURES(IM) computes the SIFT features
 %   from image IM.
@@ -14,6 +14,10 @@ function [frames, descrs] = getFeatures(im, varargin)
 %
 %   Method:: Hessian
 %     Set to DoG to use the approximated Laplacian operator score.
+%
+%   MaxHeight:: +inf
+%     Rescale the image to have the specified maximum height.
+%     Use [~, ~, IM] = GETFEATURES(...) to obtain the rescaled image.
 
 % Author: Andrea Vedaldi
 
@@ -21,12 +25,15 @@ opts.method = 'dog' ;
 opts.affineAdaptation = false ;
 opts.orientation = true ;
 opts.peakThreshold = 0.001 ;
+opts.maxHeight = +inf ;
 opts = vl_argparse(opts, varargin) ;
 
 if size(im,3) > 1, im = rgb2gray(im) ; end
 im = im2single(im) ;
 
-im = imresize(im, [480, NaN]);
+if size(im,1) > opts.maxHeight
+  im = imresize(im, [opts.maxHeight, NaN]) ;
+end
 
 [frames, descrs] = vl_covdet(im, ...
                              'EstimateAffineShape', opts.affineAdaptation, ...

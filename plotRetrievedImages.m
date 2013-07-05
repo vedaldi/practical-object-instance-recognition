@@ -49,7 +49,7 @@ guidata(gcf, data) ;
 % --------------------------------------------------------------------
 function im = getImage(imdb, ii)
 % --------------------------------------------------------------------
-imPath = fullfile(imdb.dir, imdb.images.name{ii}(1:4), imdb.images.name{ii}) ;
+imPath = fullfile(imdb.dir, imdb.images.name{ii}) ;
 im = [] ;
 
 if exist(imPath, 'file'), im = imread(imPath) ; end
@@ -92,8 +92,6 @@ end
 ii = data.perm(rank) ;
 im2 = getImage(data.imdb, ii) ;
 
-im2 = imresize(im2, [640, NaN]);
-
 % plot matches
 figure(100) ; clf ;
 plotMatches(im1,im2,...
@@ -102,9 +100,9 @@ plotMatches(im1,im2,...
             data.res.geom.matches{ii}) ;
 
 % if we have a wikipedia page, try opening the URL too
-if isfield(data.imdb.images, 'infoLinks')
-  descrUrl = data.imdb.images.infoLinks{ii} ;
-  %[~,descrUrl] = get_image_url(name) ;
+if isfield(data.imdb.images, 'wikiName')
+  name = data.imdb.images.wikiName{ii} ;
+  [~,descrUrl] = get_image_url(name) ;
   fprintf('Opening url %s\n', descrUrl) ;
   web('url',descrUrl) ;
   return ;
