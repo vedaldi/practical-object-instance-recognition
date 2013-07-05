@@ -20,8 +20,8 @@ subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
 subplot(1,2,2) ; imagesc(im3) ; axis equal off ;
 
 % Compute SIFT features for each
-[frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.001) ;
-[frames3, descrs3] = getFeatures(im3, 'peakThreshold', 0.001) ;
+[frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.01) ;
+[frames3, descrs3] = getFeatures(im3, 'peakThreshold', 0.01) ;
 
 figure(2) ;
 set(gcf,'name', 'Part I.A: SIFT features detection - synthetic pair') ;
@@ -40,7 +40,7 @@ set(gcf,'name', 'Part I.A: Original images - real pair') ;
 subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
 subplot(1,2,2) ; imagesc(im2) ; axis equal off ;
 
-[frames2, descrs2] = getFeatures(im2, 'peakThreshold', 0.001) ;
+[frames2, descrs2] = getFeatures(im2, 'peakThreshold', 0.01) ;
 
 figure(4) ;
 set(gcf,'name', 'Part I.A: SIFT features detection - real pair') ;

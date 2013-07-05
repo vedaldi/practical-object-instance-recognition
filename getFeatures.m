@@ -20,7 +20,7 @@ function [frames, descrs] = getFeatures(im, varargin)
 opts.method = 'dog' ;
 opts.affineAdaptation = false ;
 opts.orientation = true ;
-opts.peakThreshold = 28 / 256^2 ;
+opts.peakThreshold = 0.001 ;
 opts = vl_argparse(opts, varargin) ;
 
 if size(im,3) > 1, im = rgb2gray(im) ; end

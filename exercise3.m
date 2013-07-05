@@ -8,7 +8,7 @@ setup ;
 % --------------------------------------------------------------------
 
 % Load a visual word vocabulary
-load('data/oxbuild_lite_imdb_100k_ellipse_dog.mat', 'vocab', 'kdtree') ;
+load('data/oxbuild_lite_imdb_100k_disc_dog.mat', 'vocab', 'kdtree') ;
 
 % Load the two images
 im1 = imread('data/oxbuild_lite/ashmolean_000007.jpg') ;
@@ -21,7 +21,7 @@ im2 = imread('data/oxbuild_lite/ashmolean_000028.jpg') ;
 % Get the matches based on the raw descriptors
 tic ;
 [nn, dist2] = findNeighbours(descrs1, descrs2, 2) ;
-nnThreshold = 0.8 ;
+nnThreshold = 0.85 ;
 ratio2 = dist2(1,:) ./ dist2(2,:) ;
 ok = ratio2 <= nnThreshold^2 ;
 matches_raw = [find(ok) ; nn(1,ok)] ;
