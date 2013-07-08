@@ -24,7 +24,7 @@ function [frames, descrs, im] = getFeatures(im, varargin)
 opts.method = 'dog' ;
 opts.affineAdaptation = false ;
 opts.orientation = true ;
-opts.peakThreshold = 0.001 ;
+opts.peakThreshold = 28 / 256^2 ;
 opts.maxHeight = +inf ;
 opts = vl_argparse(opts, varargin) ;
 
