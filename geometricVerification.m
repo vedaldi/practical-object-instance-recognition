@@ -1,6 +1,6 @@
 function [inliers, H] = geometricVerification(f1, f2, matches, varargin)
-% GEOMETRICVERIFICATION  Verify feature matches based on geomeyry
-%   OK = GEOMETRICVERIFICATION(F1, F2, MATCHES) check for geomeric
+% GEOMETRICVERIFICATION  Verify feature matches based on geometry
+%   OK = GEOMETRICVERIFICATION(F1, F2, MATCHES) check for geometric
 %   consistency the matches MATCHES between feature frames F1 and F2
 %   (see PLOTMATCHES() for the format). INLIERS is a list of indexes
 %   of matches that are inliers to the geometric model.
@@ -77,7 +77,7 @@ function [inliers, H] = geometricVerification(f1, f2, matches, varargin)
       inliers{m} = find(dist2 < tol^2) ;
       H{m} = H21 ;
       if numel(inliers{m}) < opts.minInliers, break ; end
-      if numel(inliers{m}) > 0.7 * size(matches,2), break ; end % enoguh!
+      if numel(inliers{m}) > 0.7 * size(matches,2), break ; end % enough!
     end
   end
   scores = cellfun(@numel, inliers) ;
@@ -88,7 +88,7 @@ end
 
 % --------------------------------------------------------------------
 function C = centering(x)
-% --------------------------------------------------------------------d
+% --------------------------------------------------------------------
   T = [eye(2), - mean(x(1:2,:),2) ; 0 0 1] ;
   x = T * x ;
   std1 = std(x(1,:)) ;
