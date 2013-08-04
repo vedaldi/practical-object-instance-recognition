@@ -30,6 +30,7 @@ data=\
 data/oxbuild_lite \
 data/oxbuild_lite_imdb.mat \
 data/oxbuild_lite_imdb_100k_ellipse_dog.mat \
+data/oxbuild_lite_imdb_100k_disc_dog.mat \
 data/art_imdb_100k_disc_dog.mat \
 data/queries \
 data/graf
