@@ -1,10 +1,12 @@
 function preprocess_paintings()
 % PREPROCESS_PAINTINGS
 
+setup ;
+
 dataDir = 'data' ;
 listPath = 'extra/paintings.txt' ;
 imdb = setupWikipediaPaintings(dataDir, listPath) ;
-for t = 3
+for t = 1
   switch t
     case 1
       suffix = '100k_disc_dog' ;
