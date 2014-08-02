@@ -1,6 +1,5 @@
 name = practical-instance-recognition-2013a
 DST = vgg@login.robots.ox.ac.uk:WWW/share
-%DST = ~/d/Dropbox/Public
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 
@@ -31,7 +30,7 @@ data/oxbuild_lite \
 data/oxbuild_lite_imdb.mat \
 data/oxbuild_lite_imdb_100k_ellipse_dog.mat \
 data/oxbuild_lite_imdb_100k_disc_dog.mat \
-data/art_imdb_100k_disc_dog.mat \
+data/paintings/imdb_100k_disc_dog.mat \
 data/queries \
 data/graf
 

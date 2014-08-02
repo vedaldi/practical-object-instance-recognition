@@ -7,10 +7,10 @@ function preprocess()
   %                                                      Download VLFeat
   % --------------------------------------------------------------------
   if ~exist('vlfeat', 'dir')
-    from = 'http://www.vlfeat.org/sandbox/download/vlfeat-0.9.17-bin.tar.gz' ;
+    from = 'http://www.vlfeat.org/download/vlfeat-0.9.18-bin.tar.gz' ;
     fprintf('Downloading vlfeat from %s\n', from) ;
     untar(from, 'data') ;
-    movefile('data/vlfeat-0.9.17', 'vlfeat') ;
+    movefile('data/vlfeat-0.9.18', 'vlfeat') ;
   end
 
   setup ;
@@ -69,7 +69,8 @@ function imdb = setupOxford5kBase(prefix, imPath)
   names = {names.name} ;
   for i = 1:numel(names)
     base = names{i} ;
-    [imageName,x0,y0,x1,y1] = textread(fullfile('data/oxbuild_gt/', base), '%s %f %f %f %f') ;
+    [imageName,x0,y0,x1,y1] = textread(...
+      fullfile('data/oxbuild_gt/', base), '%s %f %f %f %f') ;
     name = base ;
     name = name(1:end-10) ;
     imageName = cell2mat(imageName) ;
@@ -78,9 +79,12 @@ function imdb = setupOxford5kBase(prefix, imPath)
     query(i).imageName = imageName ;
     query(i).imageId = toindex(imageName) ;
     query(i).box = [x0;y0;x1;y1] ;
-    query(i).good = toindex(textread(fullfile('data/oxbuild_gt/', sprintf('%s_good.txt',name)), '%s')) ;
-    query(i).ok = toindex(textread(fullfile('data/oxbuild_gt/', sprintf('%s_ok.txt',name)), '%s')) ;
-    query(i).junk = toindex(textread(fullfile('data/oxbuild_gt/', sprintf('%s_junk.txt',name)), '%s')) ;
+    query(i).good = toindex(textread(...
+      fullfile('data/oxbuild_gt/', sprintf('%s_good.txt',name)), '%s')) ;
+    query(i).ok = toindex(textread(...
+      fullfile('data/oxbuild_gt/', sprintf('%s_ok.txt',name)), '%s')) ;
+    query(i).junk = toindex(textread(...
+      fullfile('data/oxbuild_gt/', sprintf('%s_junk.txt',name)), '%s')) ;
   end
 
   % check for empty queries due to subsetting of the data

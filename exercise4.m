@@ -6,7 +6,7 @@ setup ;
 % Load the database if not already in memory, or if the one
 % is from exercise3.
 if ~exist('imdb', 'var') || ~isfield(imdb.images,'wikiName')
-  imdb = loadIndex('data/art_imdb_100k_disc_dog.mat', ...
+  imdb = loadIndex('data/paintings_imdb_100k_disc_dog.mat', ...
                    'sqrtHistograms', true) ;
   imdb.dir = '' ; % art images are not shipped with practical
 end
