@@ -1,5 +1,6 @@
 name = practical-instance-recognition-2013a
 DST = vgg@login.robots.ox.ac.uk:WWW/share
+DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/instance-recognition
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 
@@ -55,6 +56,10 @@ pack-code:
 	mkdir -p data/$(name)/data
 	ln -sft data/$(name)/ $(code)
 	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/
+
+post-doc:
+	rsync -rv doc/images $(DSTDOC)/
+	rsync -v doc/instructions.html $(DSTDOC)/index.html
 
 post: pack-all
 	rsync -v data/$(name).tar.gz $(DST)/
