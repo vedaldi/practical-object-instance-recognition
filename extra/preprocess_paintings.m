@@ -38,25 +38,19 @@ url = ['http://en.wikipedia.org/w/api.php?' ...
 
 content = urlread(url);
 
-% isolate the tag
-[s e] = regexp(content, '<ii .*" /></imageinfo>', 'start', 'end');
-iiTagContent = content(s:e - 12);
+m = regexp(content, 'parsedcomment="(?<x>[^"]*)"', 'names') ;
+comment = m.x ;
 
-% comment attribute
-[s e] = regexp(iiTagContent, 'parsedcomment=".*" url', 'start', 'end');
+m = regexp(content, ' url="(?<x>[^"]*)"', 'names') ;
+imgUrl = m.x ;
 
-comment = iiTagContent(s + 15 : e - 5);
-
-[s e] = regexp(iiTagContent, 'url=".*" desc', 'start', 'end');
-imgUrl = iiTagContent(s + 5: e - 6);
-
-[s e] = regexp(iiTagContent, ' descriptionurl=".*" />', 'start', 'end');
-descUrl = iiTagContent(s + 17: e - 4);
+m = regexp(content, 'descriptionurl="(?<x>[^"]*)"', 'names') ;
+descUrl = m.x ;
 
 % --------------------------------------------------------------------
 function imdb = setupWikipediaPaintings(dataDir, listPath)
 % --------------------------------------------------------------------
-    
+
 mkdir(fullfile(dataDir, 'paintings')) ;
 imdbPath = fullfile(dataDir, 'paintings_imdb.mat') ;
 f=fopen(listPath,'r','n','UTF-8');
@@ -89,12 +83,12 @@ for i=1:numel(images)
   if ~exist(imagePath)
     fprintf('Getting image data for %s\n', titles{i}) ;
     im = imread(imgUrl) ;
-    if size(im,1) > 640
-      im = imresize(im, [640 NaN]) ;
-    elseif size(im,2) > 640
-      im = imresize(im, [NaN 640]) ;
+    if size(im,1) > 1024
+      im = imresize(im, [1024 NaN]) ;
+    elseif size(im,2) > 1024
+      im = imresize(im, [NaN 1024]) ;
     end
-    imwrite(im, imagePath) ;
+    imwrite(im, imagePath, 'quality', 95) ;
   end
   imdb.images.id(end+1) = numel(imdb.images.id)+1 ;
   imdb.images.name{end+1} = images{i} ;

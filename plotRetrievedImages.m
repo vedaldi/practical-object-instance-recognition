@@ -24,7 +24,7 @@ clf ;
 for rank = 1:opts.num
   vl_tightsubplot(opts.num, rank) ;
   ii = perm(rank) ;
-  im0 = getImage(imdb, ii) ;
+  im0 = getImage(imdb, ii, true) ;
   data.h(rank) = imagesc(im0) ; axis image off ; hold on ;
   switch opts.labels(ii)
     case 0, cl = 'y' ;
@@ -47,7 +47,7 @@ data.res = res ;
 guidata(gcf, data) ;
 
 % --------------------------------------------------------------------
-function im = getImage(imdb, ii)
+function im = getImage(imdb, ii, thumb)
 % --------------------------------------------------------------------
 imPath = fullfile(imdb.dir, imdb.images.name{ii}) ;
 im = [] ;
@@ -56,14 +56,19 @@ if exist(imPath, 'file'), im = imread(imPath) ; end
 
 if isempty(im) && isfield(imdb.images, 'wikiName')
   name = imdb.images.wikiName{ii} ;
-  [~,~,url] = get_image_url(name) ;
-  fprintf('Downloading image ''%s'' (%s)\n', url, name) ;
-  if ~isempty(url)
+  [~,~,url,thumbUrl] = getWikiImageUrl(name) ;
+  if thumb
+    fprintf('Downloading thumbnail ''%s'' (%s)\n', thumbUrl, name) ;
+    if ~isempty(thumbUrl), im = imread(thumbUrl) ; end
+  else
+    fprintf('Downloading image ''%s'' (%s)\n', url, name) ;
     im = imread(url) ;
-    width = size(im,1) ;
-    height = size(im,2) ;
-    scale = min([1, 1024/width, 1024/height]) ;
-    im = imresize(im, scale) ;
+    if ~thumb
+      width = size(im,1) ;
+      height = size(im,2) ;
+      scale = min([1, 1024/width, 1024/height]) ;
+      im = imresize(im, scale) ;
+    end
   end
 end
 
@@ -90,7 +95,7 @@ end
 
 % get retrieved image
 ii = data.perm(rank) ;
-im2 = getImage(data.imdb, ii) ;
+im2 = getImage(data.imdb, ii, false) ;
 
 % plot matches
 figure(100) ; clf ;
@@ -103,30 +108,64 @@ plotMatches(im1,im2,...
 % if we have a wikipedia page, try opening the URL too
 if isfield(data.imdb.images, 'wikiName')
   name = data.imdb.images.wikiName{ii} ;
-  [~,descrUrl] = get_image_url(name) ;
-  fprintf('Opening url %s\n', descrUrl) ;
-  web('url',descrUrl) ;
+  urls = getWikiPageContainingImage(name) ;
+  for i=1:numel(urls)
+    fprintf('Found wikipedia page: %s\n', urls{i}) ;
+  end
+  fprintf('Opening first page %s\n', urls{1}) ;
+  web('url',urls{1}) ;
   return ;
 end
 
 % --------------------------------------------------------------------
-function [comment, descUrl, imgUrl] = get_image_url(imgTitle)
+function [comment, descUrl, imgUrl, thumbUrl] = getWikiImageUrl(imgTitle)
 % --------------------------------------------------------------------
 
-content = urlread(['http://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&format=xml&iiprop=url|parsedcomment&iilimit=1&titles=' ...
-                   urlencode(imgTitle)]);
+% thumb size
+x='iiurlwidth=240' ;
+query = sprintf(['http://en.wikipedia.org/w/api.php?'...
+                 'action=query&prop=imageinfo&format=xml&iiprop=url|'...
+                 'parsedcomment&%siilimit=1&titles=%s'], ...
+                x,urlencode(imgTitle)) ;
+content = urlread(query);
 
-% isolate the tag
-[s e] = regexp(content, '<ii .*" /></imageinfo>', 'start', 'end');
-iiTagContent = content(s:e - 12);
+m = regexp(content, 'parsedcomment="(?<x>[^"]*)"', 'names') ;
+comment = m.x ;
 
-% comment attribute
-[s e] = regexp(iiTagContent, 'parsedcomment=".*" url', 'start', 'end');
+m = regexp(content, ' url="(?<x>[^"]*)"', 'names') ;
+imgUrl = m.x ;
 
-comment = iiTagContent(s + 15 : e - 5);
+m = regexp(content, 'thumburl="(?<x>[^"]*)"', 'names') ;
+thumbUrl = m.x ;
 
-[s e] = regexp(iiTagContent, 'url=".*" desc', 'start', 'end');
-imgUrl = iiTagContent(s + 5: e - 6);
+m = regexp(content, 'descriptionurl="(?<x>[^"]*)"', 'names') ;
+descUrl = m.x ;
 
-[s e] = regexp(iiTagContent, ' descriptionurl=".*" />', 'start', 'end');
-descUrl = iiTagContent(s + 17: e - 4);
+% -------------------------------------------------------------------
+function urlList = getWikiPageContainingImage(wikiTitle)
+% -------------------------------------------------------------------
+urlList = {};
+query = [...
+  'http://en.wikipedia.org//w/api.php?' ...
+  'action=query&list=imageusage&format=xml&iutitle=' ...
+  urlencode(wikiTitle) '&iunamespace=0&iulimit=10'];
+
+content = urlread(query);
+    
+[s e] = regexp(content, '<imageusage>.*</imageusage>', 'start', 'end');
+iuTagsContent = content(s + 12:e - 13);
+    
+% get page urls
+[s, e] = regexp(iuTagsContent, 'pageid="[0-9]*"', 'start', 'end');
+    
+for ii = 1: length(s)
+  urlList{ii} = getWikiUrlFromPageId(iuTagsContent(s(ii) + 8 : e(ii) -1));
+end
+
+% -------------------------------------------------------------------
+function pageUrl = getWikiUrlFromPageId(pageid)
+% -------------------------------------------------------------------
+query = ['http://en.wikipedia.org/w/api.php?action=query&prop=info&format=xml&inprop=url&pageids=' pageid];
+content = urlread(query);
+[s e] = regexp(content, 'fullurl=".*" editurl', 'start', 'end');
+pageUrl = content(s + 9 : e - 9);
