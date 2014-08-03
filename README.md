@@ -4,6 +4,8 @@ Object instance recognition practical
 > A computer vision practical by the Oxford Visual Geometry group,
 > authored by Andrea Vedaldi and Andrew Zisserman.
 
+Start from `doc/instructions.html`.
+
 Package contents
 ----------------
 
