@@ -16,7 +16,7 @@ Read and understand the [requirements and installation instructions](#installati
 
 * Code and data: [practical-instance-recognition-2014a.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2014a.tar.gz) 560MB   
 * Code only: [practical-instance-recognition-2014a-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2014a-code-only.tar.gz) 10MB
-* Data only: [practical-instance-recognition-2014a-data-only-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2014a.tar.gz) 550MB
+* Data only: [practical-instance-recognition-2014a-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2014a-code-only.tar.gz) 550MB
 * [Git repository](https://github.com/vedaldi/practical-object-instance-recognition) (for lab setters and developers)
 
 After the installation is complete, open and edit the script `exercise1.m` in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to Part I of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files `exercise2.m`, `exercise3.m`, and `exercise4.m` are given for Part II, III, and IV.

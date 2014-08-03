@@ -38,14 +38,24 @@ url = ['http://en.wikipedia.org/w/api.php?' ...
 
 content = urlread(url);
 
+comment = [] ;
+imgUrl = [] ;
+descUrl = [] ;
+
 m = regexp(content, 'parsedcomment="(?<x>[^"]*)"', 'names') ;
-comment = m.x ;
+if numel(m) > 0
+  comment = m.x ;
+end
 
 m = regexp(content, ' url="(?<x>[^"]*)"', 'names') ;
-imgUrl = m.x ;
+if numel(m) > 0
+  imgUrl = m.x ;
+end
 
 m = regexp(content, 'descriptionurl="(?<x>[^"]*)"', 'names') ;
-descUrl = m.x ;
+if numel(m) > 0
+  descUrl = m.x ;
+end
 
 % --------------------------------------------------------------------
 function imdb = setupWikipediaPaintings(dataDir, listPath)

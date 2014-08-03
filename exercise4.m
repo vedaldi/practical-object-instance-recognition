@@ -18,7 +18,7 @@ end
 url1 = 'data/queries/mistery-painting1.jpg' ;
 url2 = 'data/queries/mistery-painting2.jpg' ;
 url3 = 'data/queries/mistery-painting3.jpg' ;
-res = search(imdb, url3, 'box', []) ;
+res = search(imdb, url1, 'box', []) ;
 
 % Display the results
 figure(1) ; clf ; set(gcf,'name', 'Part IV: query image') ;
