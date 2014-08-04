@@ -41,24 +41,29 @@ data/graf
 
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
+deps:=$(echo *.m) $(find $(data)) $(find $(doc)) $(find . vlfeat)
 
-pack:
+pack: data/$(name).tar.gz
+pack-data: data/$(name)-data-only.tar.gz
+pack-code: data/$(name)-code-only.tar.gz
+
+data/$(name).tar.gz: $(deps)
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/{data,doc}
+	mkdir -p data/$(name)/{doc,data}
 	ln -sf $(data) data/$(name)/data/
 	ln -sf $(doc) data/$(name)/doc/
 	ln -sf $(code) data/$(name)/
 	tar -C data -czvhf data/$(name).tar.gz $(name)/
 
-pack-data:
+data/$(name)-data-only.tar.gz: $(deps)
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/{data,doc}
-	ln -sf $(data) data/$(name)/data/
+	mkdir -p data/$(name)/{doc,data}
+	ln -sf $(data) data/$(name)/
 	tar -C data -czvhf data/$(name)-data-only.tar.gz $(name)/
 
-pack-code:
+data/$(name)-code-only.tar.gz: $(deps)
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/{data,doc}
+	mkdir -p data/$(name)/{doc,data}
 	ln -sf $(doc) data/$(name)/doc/
 	ln -sf $(code) data/$(name)/
 	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/
