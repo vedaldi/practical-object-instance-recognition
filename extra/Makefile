@@ -69,13 +69,13 @@ data/$(name)-code-only.tar.gz: $(deps)
 	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/
 
 post-doc:
-	rsync -rv doc/images $(DSTDOC)/
-	rsync -v doc/instructions.html $(DSTDOC)/index.html
+	rsync -rvt doc/images $(DSTDOC)/
+	rsync -vt doc/instructions.html $(DSTDOC)/index.html
 
 post: pack-all
-	rsync -v data/$(name).tar.gz $(DST)/
-	rsync -v data/$(name)-data-only.tar.gz $(DST)/
-	rsync -v data/$(name)-code-only.tar.gz $(DST)/
+	rsync -vt data/$(name).tar.gz $(DST)/
+	rsync -vt data/$(name)-data-only.tar.gz $(DST)/
+	rsync -vt data/$(name)-code-only.tar.gz $(DST)/
 
 clean:
 	find . -name '*~' -delete
