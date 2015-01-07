@@ -41,6 +41,8 @@ f2p(1,:) = f2p(1,:) + o ;
 cla ; set(gca,'ydir', 'reverse') ;
 imagesc([padarray(im1,dh1,'post') padarray(im2,dh2,'post')]) ;
 axis image off ;
+set(gca,'xlimmode', 'manual') ;
+set(gca,'ylimmode', 'manual') ;
 if opts.plotAllFrames
   vl_plotframe(f1,'linewidth',2) ;
   vl_plotframe(f2p,'linewidth',2) ;
@@ -57,8 +59,13 @@ if ~isempty(opts.homography)
   s.cursor2 = [0;0];
   s.size1 = size(im1) ;
   s.size2 = size(im2) ;
-  s.point1 = plot(0,0,'g+','MarkerSize', 40, 'EraseMode','xor') ;
-  s.point2 = plot(0,0,'r+','MarkerSize', 40, 'EraseMode','xor') ;
+  if verLessThan('matlab', '8.4.0')
+    s.point1 = plot(0,0,'g+','MarkerSize', 40, 'EraseMode','xor') ;
+    s.point2 = plot(0,0,'r+','MarkerSize', 40, 'EraseMode','xor') ;
+  else
+    s.point1 = plot(0,0,'g+','MarkerSize', 40) ;
+    s.point2 = plot(0,0,'r+','MarkerSize', 40) ;
+  end
   s.H = inv(opts.homography) ;
   set(gcf, 'UserData', s)
   set(gcf, 'WindowButtonMotionFcn', @mouseMove) ;
@@ -78,3 +85,5 @@ else
 end
 set(s.point1, 'XData', s.cursor1(1) , 'YData', s.cursor1(2)) ;
 set(s.point2, 'XData', s.cursor2(1) + s.size1(2) , 'YData', s.cursor2(2)) ;
+if ~ verLessThan('matlab', '8.4.0'), drawnow expose ; end
+ 
