@@ -39,6 +39,8 @@ data/paintings_imdb_100k_disc_dog.mat \
 data/queries \
 data/graf
 
+tarflags=--exclude='.git*'
+
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
 doc:=$(addprefix $(CURDIR)/,$(doc))
