@@ -12,7 +12,7 @@ The goal of this session is to get basic practical experience with the methods t
 
 ## Getting started
 
-Read and understand the [requirements and installation instructions](#installation). The download links for this practical are:
+Read and understand the [requirements and installation instructions](../overview/index.html#installation). The download links for this practical are:
 
 * Code and data: [practical-instance-recognition-2014a.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2014a.tar.gz) 560MB   
 * Code only: [practical-instance-recognition-2014a-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2014a-code-only.tar.gz) 10MB
@@ -292,41 +292,6 @@ That completes this practical.
 
 ## History
 
+* Used in the Oxford AIMS CDT, 2014-15
 * Used at [ENS/INRIA Visual Recognition and Machine Learning Summer School, 2012](http://www.di.ens.fr/willow/events/cvml2012/).
 * Used at [JHU Summer School on Human Language Technology, 2012](http://www.clsp.jhu.edu/workshops/archive/ws-12/summer-school/).
-
-# Requirements and installation {#installation}
-
-This section contains information for lab setters and instructors.
-
-## Planning your laboratory experience
-
-Practicals are organised in tracks of different duration.
-
-* **Fast track:** 1.5 hours.
-* **Full track:** 3 hours.
-
-Parts that should be skipped on fast track are clearly marked **in this style**.The practical requires each student to have the following equipment and software:
-
-* Windows, Mac OS X, or Linux computer
-* At least 2GB RAM
-* MATLAB 2009B onwards (earlier versions may or may not work)
-* MATLAB Image Processing toolbox
-
-**Note:** If you plan to use students' personal computers, we suggest that you leave plenty of time in advance of the practical in order to download and install the required data and software.
-
-## Installation
-
-Each practical contains data and MATLAB code (including a copy of the VLFeat library). To install a practical:
-
-* Find the practical download link at the top of each practical page. E.g. `practical-instance-recognition-2013a.tar.gz`.
-* Download the package. 
-* Unpack the package. The archive is in `.tar.gz` format and will unpack to a directory of the same name, e.g. `practical-instance-recognition-2013a/`.
-
-For convenience, additional packages containing only the code and the data are provided as well.
-
-## Help and troubleshooting
-
-* **Getting help.** As you progress in a practical you can use MATLAB help command to display the help of the MATLAB functions that you need to use. For example, try typing help setup.
-* **Interfering VLFeat copies.** If you have a copy VLFeat toolbox loaded automatically on starting MATLAB, the copy shipped with this practical may conflict with it (it will generate errors during the execution of the exercises). In this case, switch to the shipped version of the toolbox. First, try issuing `clear mex ; vlfeat/toolbox/vl_setup`. If this does not solve the problem, exit MATLAB and restart it without loading your default VLFeat installation (this may require editing your MATLAB `startup.m` file).
-* **Corrupted .MAT or other files.** If MATLAB complains about a corrupted .mat file, consider trying a different unpacking software. At least one version on WinZip caused problems for some students.
