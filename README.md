@@ -51,9 +51,10 @@ Appendix: Installing from scratch
 Changes
 -------
 
+* *2015a* - Compatibility with MATLAB 2014b.
 * *2014a* - Improves documentation and packing.
 * *2013a* - Improves documentation, uses last version of VLFeat, bugfixes.
-* *2012* - Adds co-varaint feature detectors
+* *2012*  - Adds co-varaint feature detectors
 * *2011*  - Initial edition
 
 License

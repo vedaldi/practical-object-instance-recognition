@@ -1,4 +1,4 @@
-name = practical-instance-recognition-2014a
+name = practical-instance-recognition-2015a
 DST = vgg@login.robots.ox.ac.uk:WWW/share
 DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/instance-recognition
 
