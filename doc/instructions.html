@@ -10,7 +10,7 @@
 
 <p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2015a).</p>
 
-<p><img src="images/cover.png" alt="cover"></p>
+<p><img width="500" src="images/cover.png" alt="cover"></p>
 
 <p>The goal of instance-level recognition is to match (recognize) a specific object or scene. Examples include recognizing a specific building, such as Notre Dame, or a specific painting, such as ”Starry Night” by Van Gogh. The object is recognized despite changes in scale, camera viewpoint, illumination conditions and partial occlusion. An important application is image retrieval – starting from an image of an object of interest (the query), search through an image dataset to obtain (or retrieve) those images that contain the target object.</p>
 
@@ -44,8 +44,6 @@
 </ul>
 </div>
 </p>
-
-
 
 <h2 id="getting-started">Getting started</h2>
 
@@ -81,7 +79,7 @@ im3 = imresize(imrotate(im1,<span class="hljs-number">35</span>,<span class="hlj
 subplot(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>) ; imagesc(im1) ; axis equal off ; hold on ;
 subplot(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>) ; imagesc(im3) ; axis equal off ;</code></pre>
 
-<p>A SIFT frame is a circle with an orientation and is specified by four parameters: the center <script type="math/tex" id="MathJax-Element-227">t_x</script>, <script type="math/tex" id="MathJax-Element-228">t_y</script>, the scale <script type="math/tex" id="MathJax-Element-229">s</script>, and the rotation <script type="math/tex" id="MathJax-Element-230">\theta</script> (in radians), resulting in a vector of four parameters <script type="math/tex" id="MathJax-Element-231">(s, \theta, t_x, t_y)</script>. Now compute and visualise the SIFT feature detections (frames):</p>
+<p>A SIFT frame is a circle with an orientation and is specified by four parameters: the center <script type="math/tex" id="MathJax-Element-47">t_x</script>, <script type="math/tex" id="MathJax-Element-48">t_y</script>, the scale <script type="math/tex" id="MathJax-Element-49">s</script>, and the rotation <script type="math/tex" id="MathJax-Element-50">\theta</script> (in radians), resulting in a vector of four parameters <script type="math/tex" id="MathJax-Element-51">(s, \theta, t_x, t_y)</script>. Now compute and visualise the SIFT feature detections (frames):</p>
 
 
 
@@ -166,7 +164,7 @@ im2 = imread(<span class="hljs-string">'data/oxbuild_lite/all_souls_000015.jpg'<
 
 
 
-<p><script type="math/tex; mode=display" id="MathJax-Element-232">
+<p><script type="math/tex; mode=display" id="MathJax-Element-52">
 \begin{bmatrix}
 x' \\ y'
 \end{bmatrix}
@@ -181,7 +179,7 @@ t_x \\ t_y
 \end{bmatrix}
 </script></p>
 
-<p>which consists of a rotation by <script type="math/tex" id="MathJax-Element-233">\theta</script>, an isotropic scaling (i.e. same in all directions) by s, and a translation by a vector <script type="math/tex" id="MathJax-Element-234">(t_x, t_y)</script>. This transformation is specified by four parameters <script type="math/tex" id="MathJax-Element-235">(s,\theta,t_x,t_y)</script> and can be computed from a single correspondence between SIFT detections in each image.</p>
+<p>which consists of a rotation by <script type="math/tex" id="MathJax-Element-53">\theta</script>, an isotropic scaling (i.e. same in all directions) by s, and a translation by a vector <script type="math/tex" id="MathJax-Element-54">(t_x, t_y)</script>. This transformation is specified by four parameters <script type="math/tex" id="MathJax-Element-55">(s,\theta,t_x,t_y)</script> and can be computed from a single correspondence between SIFT detections in each image.</p>
 
 <blockquote>
   <p><strong>Task:</strong> Work out how to compute this transformation from a single correspondence.</p>
@@ -238,7 +236,7 @@ t_x \\ t_y
 
 <p>So far the change in viewpoint between images has been a similarity transformation. Now we consider more severe viewpoint changes - for example where an object is fronto-parallel in one view, and turns away from the camera in the other as in the graffiti wall images below:</p>
 
-<p><img src="images/aff1.jpeg" alt="aff1"><img src="images/aff2.jpeg" alt="aff2"><img src="images/aff3.jpeg" alt="aff3"></p>
+<p><img src="images/aff1.jpeg" alt="aff1" width="200px&quot;/"><img src="images/aff2.jpeg" alt="aff2" width="200px&quot;/"><img src="images/aff3.jpeg" alt="aff3" width="200px/"></p>
 
 <p>In this case, there is foreshortening (anisotropic scaling) and perspective distortions between the images (as well as in-plane rotation, translation and scaling). A circle in one image cannot cover the same scene area as a circle in the other, but an ellipse can. Affine co-variant detectors are designed to find such regions.</p>
 
@@ -256,8 +254,6 @@ t_x \\ t_y
 
 <p><strong>Note:</strong> There are many other detector variants that could be used for this task. These can be activated by the method option of getFeatures.m (see also help <code>vl_covdet</code>).</p>
 
-
-
 <h2 id="part3">Part III: Towards large scale retrieval</h2>
 
 <p>In large scale retrieval the goal is to match a query image to a large database of images (for example the WWW or Wikipedia). The quality of a match is measured as the number of geometrically verified feature correspondences between the query and a database image. While the techniques discussed in Part I and II are sufficient to do this, in practice they require too much memory to store the SIFT descriptors for all the detections in all the database images. We explore next two key ideas: one to reduce the memory footprint and pre-compute descriptor matches; the other to speed up image retrieval.</p>
@@ -272,7 +268,7 @@ t_x \\ t_y
 
 <p>Instead of matching feature descriptors directly as done in Part I and II, descriptors are usually mapped first to discrete symbols, also called visual words, by means of a clustering technique like K-Means. The descriptors that are assigned to the same visual word are considered matched. Each of the rows in the following figure illustrates image patches that are mapped to the same visual word, and are hence indistinguishable by the representation.</p>
 
-<p><img src="images/words.jpeg" alt="words"></p>
+<p><img src="images/words.jpeg" alt="words" width="400px/"></p>
 
 <p>Then, matching two sets of feature descriptors (from two images) reduces to finding the intersection of two sets of symbols.</p>
 
@@ -311,8 +307,6 @@ t_x \\ t_y
   <li>Compare the number of inliers obtained before and after this modification.</li>
   </ul>
 </blockquote>
-
-
 
 <h3 id="stage3b">Stage III.B: Searching with an inverted index</h3>
 
@@ -355,15 +349,13 @@ t_x \\ t_y
 
 <p><img src="images/query.jpeg" alt="query"></p>
 
-
-
 <h2 id="part-iv-large-scale-retrieval">Part IV: Large scale retrieval</h2>
 
 <p><strong>Skip and end here on fast track</strong></p>
 
 <p>The images below are all details of paintings. The goal of this last part of the practical is to identify the paintings that they came from. For this we selected a set of 1734 images of paintings from Wikipedia.</p>
 
-<p><img src="images/paint1.jpeg" alt="paint1"><img src="images/paint2.jpeg" alt="paint2"><img src="images/paint3.jpeg" alt="paint3"></p>
+<p><img src="images/paint1.jpeg" alt="paint1" height="200px/"><img src="images/paint2.jpeg" alt="paint2" height="200px/"><img src="images/paint3.jpeg" alt="paint3" height="200px/"></p>
 
 <p>To identify the details you can either:</p>
 
@@ -397,8 +389,6 @@ t_x \\ t_y
 
 <p>That completes this practical.</p>
 
-
-
 <h2 id="links-and-further-work">Links and further work</h2>
 
 <ul>
@@ -419,9 +409,7 @@ t_x \\ t_y
 <li>Funding from ERC grant VisRec Grant No. 228180, and a PASCAL Harvest Grant.</li>
 </ul>
 
-<p><img src="images/erc.jpeg" alt="erc"><img src="images/pascal2.png" alt="pascal2"></p>
-
-
+<p><img src="images/erc.jpeg" alt="erc" height="100px/"><img src="images/PASCAL2.png" alt="pascal2" height="100px/"></p>
 
 <h2 id="history">History</h2>
 

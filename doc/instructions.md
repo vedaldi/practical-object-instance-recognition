@@ -2,7 +2,7 @@
 
 This is an [Oxford Visual Geometry Group](http://www.robots.ox.ac.uk/~vgg) computer vision practical, authored by [Andrea Vedaldi](http://www.robots.ox.ac.uk/~vedaldi/) and Andrew Zisserman (Release 2015a).
 
-<img src="images/cover.png" alt="cover" style="width: 500px;"/>
+<img width=500 src="images/cover.png" alt="cover"/>
 
 The goal of instance-level recognition is to match (recognize) a specific object or scene. Examples include recognizing a specific building, such as Notre Dame, or a specific painting, such as ''Starry Night'' by Van Gogh. The object is recognized despite changes in scale, camera viewpoint, illumination conditions and partial occlusion. An important application is image retrieval -- starting from an image of an object of interest (the query), search through an image dataset to obtain (or retrieve) those images that contain the target object.
 
@@ -157,7 +157,7 @@ will pause MATLAB for three seconds and return an elapsed time approximately equ
 
 So far the change in viewpoint between images has been a similarity transformation. Now we consider more severe viewpoint changes - for example where an object is fronto-parallel in one view, and turns away from the camera in the other as in the graffiti wall images below:
 
-<img src="images/aff1.jpeg" alt="aff1" style="width: 200px;"/><img src="images/aff2.jpeg" alt="aff2" style="width: 200px;"/><img src="images/aff3.jpeg" alt="aff3" style="width: 200px;"/>
+<img src="images/aff1.jpeg" alt="aff1" width=200px"/><img src="images/aff2.jpeg" alt="aff2" width=200px"/><img src="images/aff3.jpeg" alt="aff3" width=200px/>
 
 In this case, there is foreshortening (anisotropic scaling) and perspective distortions between the images (as well as in-plane rotation, translation and scaling). A circle in one image cannot cover the same scene area as a circle in the other, but an ellipse can. Affine co-variant detectors are designed to find such regions.
 
@@ -181,7 +181,7 @@ In large scale retrieval the goal is to match a query image to a large database 
 
 Instead of matching feature descriptors directly as done in Part I and II, descriptors are usually mapped first to discrete symbols, also called visual words, by means of a clustering technique like K-Means. The descriptors that are assigned to the same visual word are considered matched. Each of the rows in the following figure illustrates image patches that are mapped to the same visual word, and are hence indistinguishable by the representation.
 
-<img src="images/words.jpeg" alt="words" style="width: 400px;"/>
+<img src="images/words.jpeg" alt="words" width=400px/>
 
 Then, matching two sets of feature descriptors (from two images) reduces to finding the intersection of two sets of symbols.
 
@@ -240,7 +240,7 @@ Histogram-based retrieval results are good but far from perfect. Given a short l
 
 Now try the full system to retrieve matches to an unseen query image.
 
-<img src="images/query.jpeg" alt="query" style="query: 400px;"/>
+<img src="images/query.jpeg" alt="query" width-=400px/>
 
 ## Part IV: Large scale retrieval
 
@@ -248,7 +248,7 @@ Now try the full system to retrieve matches to an unseen query image.
 
 The images below are all details of paintings. The goal of this last part of the practical is to identify the paintings that they came from. For this we selected a set of 1734 images of paintings from Wikipedia.
 
-<img src="images/paint1.jpeg" alt="paint1" style="height: 200px;"/><img src="images/paint2.jpeg" alt="paint2" style="height: 200px;"/><img src="images/paint3.jpeg" alt="paint3" style="height: 200px;"/>
+<img src="images/paint1.jpeg" alt="paint1" height=200px/><img src="images/paint2.jpeg" alt="paint2" height=200px/><img src="images/paint3.jpeg" alt="paint3" height=200px/>
 
 To identify the details you can either:
 
@@ -288,7 +288,7 @@ That completes this practical.
 * Comments from Relja Arandjelovic, Karen Simonyan, Omkar Parkhi, Meelis Lootus, Hossein Azizpour, Max Jaderberg
 * Funding from ERC grant VisRec Grant No. 228180, and a PASCAL Harvest Grant.
 
-<img src="images/erc.jpeg" alt="erc" style="height: 100px;"/><img src="images/pascal2.png" alt="pascal2" style="height: 100px;"/>
+<img src="images/erc.jpeg" alt="erc" height=100px/><img src="images/PASCAL2.png" alt="pascal2" height=100px/>
 
 ## History
 
