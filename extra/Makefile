@@ -1,6 +1,7 @@
-name = practical-instance-recognition-2015a
+name = practical-instance-recognition-2016a
 DST = vgg@login.robots.ox.ac.uk:WWW/share
 DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/instance-recognition
+TMPDIR = /tmp
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 
@@ -28,6 +29,7 @@ vlfeat
 
 doc=\
 doc/images \
+doc/base.css \
 doc/instructions.html
 
 data=\
@@ -45,6 +47,9 @@ code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
 doc:=$(addprefix $(CURDIR)/,$(doc))
 deps:=$(shell find $(code) $(doc) $(data) -type f | sed "s/ /\\\\ /g")
+
+.PHONY: doc
+doc: doc/instructions.html
 
 pack: $(TMPDIR)/$(name).tar.gz
 pack-data: $(TMPDIR)/$(name)-data-only.tar.gz
@@ -71,8 +76,15 @@ $(TMPDIR)/$(name)-code-only.tar.gz: $(deps)
 	ln -sf $(code) $(TMPDIR)/$(name)/
 	tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-code-only.tar.gz $(tarflags) $(name)/
 
-post-doc:
-	rsync -rvt doc/images $(DSTDOC)/
+doc/instructions.html : doc/instructions.md doc/base.html extra/Makefile
+	cp doc/base.html "$@"
+	python -m markdown \
+	  -x toc -x footnotes -x tables -x fenced_code \
+	  "$<" >> "$@"
+	cat doc/end.html >> "$@"
+
+post-doc: doc/instructions.html
+	rsync -rvt doc/base.css doc/images $(DSTDOC)/
 	rsync -vt doc/instructions.html $(DSTDOC)/index.html
 
 post: pack-all

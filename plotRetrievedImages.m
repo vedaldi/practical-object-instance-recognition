@@ -19,7 +19,7 @@ end
 [scores, perm] = sort(scores, 'descend') ;
 if isempty(opts.labels), opts.labels = zeros(1,numel(scores)) ; end
 
-clf ;
+clf('reset') ;
 
 for rank = 1:opts.num
   vl_tightsubplot(opts.num, rank) ;
@@ -98,7 +98,7 @@ ii = data.perm(rank) ;
 im2 = getImage(data.imdb, ii, false) ;
 
 % plot matches
-figure(100) ; clf ;
+figure(100) ; clf('reset') ;
 plotMatches(im1,im2,...
             data.res.features.frames, ...
             data.imdb.images.frames{ii}, ...
@@ -112,8 +112,12 @@ if isfield(data.imdb.images, 'wikiName')
   for i=1:numel(urls)
     fprintf('Found wikipedia page: %s\n', urls{i}) ;
   end
-  fprintf('Opening first page %s\n', urls{1}) ;
-  web('url',urls{1}) ;
+  if length(urls) > 0
+    fprintf('Opening first page %s\n', urls{1}) ;
+    web('url',urls{1}) ;
+  else
+    warning('Could not find an Wikipedia page containing %s', name) ;
+  end
   return ;
 end
 
@@ -146,18 +150,18 @@ function urlList = getWikiPageContainingImage(wikiTitle)
 % -------------------------------------------------------------------
 urlList = {};
 query = [...
-  'http://en.wikipedia.org//w/api.php?' ...
+  'https://en.wikipedia.org//w/api.php?' ...
   'action=query&list=imageusage&format=xml&iutitle=' ...
   urlencode(wikiTitle) '&iunamespace=0&iulimit=10'];
 
 content = urlread(query);
-    
+
 [s e] = regexp(content, '<imageusage>.*</imageusage>', 'start', 'end');
 iuTagsContent = content(s + 12:e - 13);
-    
+
 % get page urls
 [s, e] = regexp(iuTagsContent, 'pageid="[0-9]*"', 'start', 'end');
-    
+
 for ii = 1: length(s)
   urlList{ii} = getWikiUrlFromPageId(iuTagsContent(s(ii) + 8 : e(ii) -1));
 end
@@ -165,7 +169,7 @@ end
 % -------------------------------------------------------------------
 function pageUrl = getWikiUrlFromPageId(pageid)
 % -------------------------------------------------------------------
-query = ['http://en.wikipedia.org/w/api.php?action=query&prop=info&format=xml&inprop=url&pageids=' pageid];
+query = ['https://en.wikipedia.org/w/api.php?action=query&prop=info&format=xml&inprop=url&pageids=' pageid];
 content = urlread(query);
 [s e] = regexp(content, 'fullurl=".*" editurl', 'start', 'end');
 pageUrl = content(s + 9 : e - 9);
