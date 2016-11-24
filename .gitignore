@@ -1,4 +1,5 @@
-data
 *~
+data
+doc/prism.css
+doc/prism.js
 vlfeat
-practical-instance-search*.tar.gz

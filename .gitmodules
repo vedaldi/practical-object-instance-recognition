@@ -1,0 +1,3 @@
+[submodule "extra/practical"]
+	path = extra/practical
+	url = git@github.com:vedaldi/practical.git
