@@ -1,7 +1,7 @@
 function matches = matchWords(a, b)
 % MATCHWORDS Matches sets of visual words
 %   MATCHES = MATCHWORDS(A, B) finds occurences in B of each element
-%   of A. Each matched pair is stored as a row of the 2xN matrix A,
+%   of A. Each matched pair is stored as a row of the 2xN matrix MATCHES,
 %   such that A(MATCHES(1,i)) == B(MATCHES(2,i)).
 %
 %   By default, if an element of A matches to more than one element of
