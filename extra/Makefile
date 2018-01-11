@@ -1,7 +1,5 @@
-# Build practical
-
 name ?= instance-recognition
-ver ?= 2016b
+ver ?= 2018a
 
 code=\
 exercise1.m \
