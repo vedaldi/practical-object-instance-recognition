@@ -51,6 +51,7 @@ Appendix: Installing from scratch
 Changes
 -------
 
+* *2018a* - Updated VLFeat.
 * *2015a* - Compatibility with MATLAB 2014b.
 * *2014a* - Improves documentation and packing.
 * *2013a* - Improves documentation, uses last version of VLFeat, bugfixes.

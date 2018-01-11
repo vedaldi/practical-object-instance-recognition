@@ -3,30 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Image classification practical (CNN version)</title>
+  <title>VGG Practical</title>
   <link rel="stylesheet" href="base.css" />
-  <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX", "output/HTML-CSS"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-      processEscapes: true
-    },
-    "HTML-CSS": { availableFonts: ["TeX"] }
-  });
-  </script>
-  <script type="text/javascript"
-          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
-  <!-- Code highlights -->
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/default.min.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="prism.css" />
 </head>
 <body>
 <h1 id="recognition-of-object-instances-practical">Recognition of object instances practical</h1>
-<p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2016a).</p>
+<p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2018a).</p>
 <p><img width=500 src="images/cover.png" alt="cover"/></p>
 <p>The goal of instance-level recognition is to match (recognize) a specific object or scene. Examples include recognizing a specific building, such as Notre Dame, or a specific painting, such as ''Starry Night'' by Van Gogh. The object is recognized despite changes in scale, camera viewpoint, illumination conditions and partial occlusion. An important application is image retrieval -- starting from an image of an object of interest (the query), search through an image dataset to obtain (or retrieve) those images that contain the target object.</p>
 <p>The goal of this session is to get basic practical experience with the methods that enable specific object recognition. It includes: (i) using SIFT features to obtain sparse matches between two images; (ii) using affine co-variant detectors to cover changes in viewpoint; (iii) vector quantizing the SIFT descriptors into visual words to enable large scale retrieval; and (iv) constructing and using an image retrieval system to identify objects.</p>
@@ -41,12 +24,12 @@
 <li><a href="#stage-id-improving-sift-matching-using-a-geometric-transformation">Stage I.D: Improving SIFT matching using a geometric transformation</a></li>
 </ul>
 </li>
-<li><a href="#part-ii-affine-co-variant-detectors-part2">Part II: Affine co-variant detectors {#part2}</a></li>
-<li><a href="#part-iii-towards-large-scale-retrieval-part3">Part III: Towards large scale retrieval {#part3}</a><ul>
+<li><a href="#part2">Part II: Affine co-variant detectors</a></li>
+<li><a href="#part3">Part III: Towards large scale retrieval</a><ul>
 <li><a href="#stage-iiia-accelerating-descriptor-matching-with-visual-words">Stage III.A: Accelerating descriptor matching with visual words</a></li>
-<li><a href="#stage-iiib-searching-with-an-inverted-index-stage3b">Stage III.B: Searching with an inverted index {#stage3b}</a></li>
-<li><a href="#stage-iiic-geometric-rescoring-stage3c">Stage III.C: Geometric rescoring {#stage3c}</a></li>
-<li><a href="#stage-iiid-full-system-stage3d">Stage III.D: Full system {#stage3d}</a></li>
+<li><a href="#stage3b">Stage III.B: Searching with an inverted index</a></li>
+<li><a href="#stage3c">Stage III.C: Geometric rescoring</a></li>
+<li><a href="#stage3d">Stage III.D: Full system</a></li>
 </ul>
 </li>
 <li><a href="#part-iv-large-scale-retrieval">Part IV: Large scale retrieval</a></li>
@@ -60,9 +43,9 @@
 <h2 id="getting-started">Getting started</h2>
 <p>Read and understand the <a href="../overview/index.html#installation">requirements and installation instructions</a>. The download links for this practical are:</p>
 <ul>
-<li>Code and data: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2016a.tar.gz">practical-instance-recognition-2016a.tar.gz</a> 560MB</li>
-<li>Code only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2016a-code-only.tar.gz">practical-instance-recognition-2016a-code-only.tar.gz</a> 10MB</li>
-<li>Data only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2016a-data-only.tar.gz">practical-instance-recognition-2016a-data-only.tar.gz</a> 550MB</li>
+<li>Code and data: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2018a.tar.gz">practical-instance-recognition-2018a.tar.gz</a> 560MB</li>
+<li>Code only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2018a-code-only.tar.gz">practical-instance-recognition-2018a-code-only.tar.gz</a> 10MB</li>
+<li>Data only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-instance-recognition-2018a-data-only.tar.gz">practical-instance-recognition-2018a-data-only.tar.gz</a> 550MB</li>
 <li><a href="https://github.com/vedaldi/practical-object-instance-recognition">Git repository</a> (for lab setters and developers)</li>
 </ul>
 <p>After the installation is complete, open and edit the script <code>exercise1.m</code> in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to Part I of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files <code>exercise2.m</code>, <code>exercise3.m</code>, and <code>exercise4.m</code> are given for Part II, III, and IV.</p>
@@ -70,7 +53,7 @@
 <h2 id="part-i-sparse-features-for-matching-object-instances">Part I: Sparse features for matching object instances</h2>
 <h3 id="stage-ia-sift-features-detector">Stage I.A: SIFT features detector</h3>
 <p>The SIFT feature has both a detector and a descriptor. We will start by computing and visualizing the SIFT feature detections for two images of the same object (a building facade). Load an image, rotate and scale it, and then display the original and transformed pair:</p>
-<pre><code class="matlab">% Load an image
+<pre><code class="language-matlab">% Load an image
 im1 = imread('data/oxbuild_lite/all_souls_000002.jpg') ;
 % Let the second image be a rotated and scaled version of the first
 im3 = imresize(imrotate(im1,35,'bilinear'),0.7) ;% Display the images
@@ -79,7 +62,7 @@ subplot(1,2,2) ; imagesc(im3) ; axis equal off ;
 </code></pre>
 
 <p>A SIFT frame is a circle with an orientation and is specified by four parameters: the center $t_x$, $t_y$, the scale $s$, and the rotation $\theta$ (in radians), resulting in a vector of four parameters $(s, \theta, t_x, t_y)$. Now compute and visualise the SIFT feature detections (frames):</p>
-<pre><code class="matlab">% Compute SIFT features for each
+<pre><code class="language-matlab">% Compute SIFT features for each
 [frames1, descrs1] = getFeatures(im1, 'peakThreshold', 0.01) ;
 [frames3, descrs3] = getFeatures(im3, 'peakThreshold', 0.01) ;
 subplot(1,2,1) ; imagesc(im1) ; axis equal off ; hold on ;
@@ -93,7 +76,7 @@ vl_plotframe(frames3, 'linewidth', 2) ;
 <p><strong>Task:</strong> The number of detected features can be controlled by changing the <code>peakThreshold</code> option. A larger value will select features that correspond to higher contrast structures in the image. Try this now: run again the same code, but increase <code>peakThreshold</code> two or three times.</p>
 </blockquote>
 <p>Now repeat the exercise with a pair of natural images. Start by loading the second one:</p>
-<pre><code class="matlab">% Load a second image
+<pre><code class="language-matlab">% Load a second image
 im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
 </code></pre>
 
@@ -122,7 +105,7 @@ im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
 <p><strong>Question:</strong>     Notice that there are many mismatches. Examine some of the mismatches to understand why the mistakes are being made. For example, is the change in lighting a problem? What additional constraints can be applied to remove the mismatches?</p>
 </blockquote>
 <p><strong>Hint:</strong> You can visualize a subset of the matches using:</p>
-<pre><code class="matlab">figure; plotMatches(im1,im2,frames1,frames2,matches(:,3:200:end));
+<pre><code class="language-matlab">figure; plotMatches(im1,im2,frames1,frames2,matches(:,3:200:end));
 </code></pre>
 
 <h3 id="stage-ic-improving-sift-matching-using-lowes-second-nearest-neighbour-test">Stage I.C: Improving SIFT matching using Lowe’s second nearest neighbour test</h3>
@@ -136,20 +119,22 @@ im2 = imread('data/oxbuild_lite/all_souls_000015.jpg') ;
 </blockquote>
 <h3 id="stage-id-improving-sift-matching-using-a-geometric-transformation">Stage I.D: Improving SIFT matching using a geometric transformation</h3>
 <p>In addition to the 2nd NN test, we can also require consistency between the matches and a geometric transformation between the images. For the moment we will look for matches that are consistent with a similarity transformation</p>
-<p>$$
+<p>
+<script type="math/tex; mode=display">
 \begin{bmatrix}
-x' \ y'
+x' \\ y'
 \end{bmatrix}
 =
 sR(\theta)
 \begin{bmatrix}
-x \ y
+x \\ y
 \end{bmatrix}
 +
 \begin{bmatrix}
-t_x \ t_y
+t_x \\ t_y
 \end{bmatrix}
-$$</p>
+</script>
+</p>
 <p>which consists of a rotation by $\theta$, an isotropic scaling (i.e. same in all directions) by s, and a translation by a vector $(t_x, t_y)$. This transformation is specified by four parameters $(s,\theta,t_x,t_y)$ and can be computed from a single correspondence between SIFT detections in each image.</p>
 <blockquote>
 <p><strong>Task:</strong> Work out how to compute this transformation from a single correspondence.</p>
@@ -183,11 +168,11 @@ $$</p>
 <strong>Task:</strong> Run geometric verification and check the number of verified matches using this expanded list.</p>
 </blockquote>
 <p><strong>Hint:</strong> You can use MATLAB’s tic and toc functions to measure the execution time of a snippet of code. For example</p>
-<pre><code class="matlab">tic ; pause(3) ; toc
+<pre><code class="language-matlab">tic ; pause(3) ; toc
 </code></pre>
 
 <p>will pause MATLAB for three seconds and return an elapsed time approximately equal to 3. See <code>help tic</code> for details.</p>
-<h2 id="part-ii-affine-co-variant-detectors-part2">Part II: Affine co-variant detectors {#part2}</h2>
+<h2 id="part2">Part II: Affine co-variant detectors</h2>
 <p>So far the change in viewpoint between images has been a similarity transformation. Now we consider more severe viewpoint changes - for example where an object is fronto-parallel in one view, and turns away from the camera in the other as in the graffiti wall images below:</p>
 <p><img src="images/aff1.jpeg" alt="aff1" width=200px"/><img src="images/aff2.jpeg" alt="aff2" width=200px"/><img src="images/aff3.jpeg" alt="aff3" width=200px/></p>
 <p>In this case, there is foreshortening (anisotropic scaling) and perspective distortions between the images (as well as in-plane rotation, translation and scaling). A circle in one image cannot cover the same scene area as a circle in the other, but an ellipse can. Affine co-variant detectors are designed to find such regions.</p>
@@ -200,7 +185,7 @@ $$</p>
 <p><strong>Question:</strong> The transformation between the images induced by the plane is a planar homography. The detections are only affine co-variant (not as general as a planar homography). So how can descriptors computed on these detections possibly match?</p>
 </blockquote>
 <p><strong>Note:</strong> There are many other detector variants that could be used for this task. These can be activated by the method option of getFeatures.m (see also help <code>vl_covdet</code>).</p>
-<h2 id="part-iii-towards-large-scale-retrieval-part3">Part III: Towards large scale retrieval {#part3}</h2>
+<h2 id="part3">Part III: Towards large scale retrieval</h2>
 <p>In large scale retrieval the goal is to match a query image to a large database of images (for example the WWW or Wikipedia). The quality of a match is measured as the number of geometrically verified feature correspondences between the query and a database image. While the techniques discussed in Part I and II are sufficient to do this, in practice they require too much memory to store the SIFT descriptors for all the detections in all the database images. We explore next two key ideas: one to reduce the memory footprint and pre-compute descriptor matches; the other to speed up image retrieval.</p>
 <blockquote>
 <p><strong>Task:</strong> Open and edit the script <code>exercise3.m</code> in the MATLAB editor, and cut and paste to work through the following stages.</p>
@@ -237,7 +222,7 @@ $$</p>
 <li>Compare the number of inliers obtained before and after this modification.</li>
 </ul>
 </blockquote>
-<h3 id="stage-iiib-searching-with-an-inverted-index-stage3b">Stage III.B: Searching with an inverted index {#stage3b}</h3>
+<h3 id="stage3b">Stage III.B: Searching with an inverted index</h3>
 <p>While matching with visual words is much faster than doing so by comparing feature descriptors directly, scoring images directly based on the number of geometrically verified matches still entails fitting a geometric model, a relatively slow operation. Rather than scoring all the images in the database in this way, we are going to use an approximation and count the number of visual words shared between two images.</p>
 <p>To this end, one computes a histogram of the visual words in a query image and for each of  the database images. Then the number of visual words in common can be computed from the intersection of the two histograms.</p>
 <p>The histogram intersection can be thought as a similarity measure between two histograms. In practice, this measure can be refined in several ways:</p>
@@ -251,13 +236,13 @@ $$</p>
 <p><strong>Task:</strong> How many erroneously matched images do you count in the top results?
 <strong>Question:</strong> Why does the top image have a score of 1?</p>
 </blockquote>
-<h3 id="stage-iiic-geometric-rescoring-stage3c">Stage III.C: Geometric rescoring {#stage3c}</h3>
+<h3 id="stage3c">Stage III.C: Geometric rescoring</h3>
 <p>Histogram-based retrieval results are good but far from perfect. Given a short list of top ranked images from the previous step, we are now going to re-score them based on the number of inlier matches after a geometric verification step.</p>
 <blockquote>
 <p><strong>Question:</strong> Why is the top score much larger than 1 now?
 <strong>Question:</strong> Are the retrieval results improved after geometric verification?</p>
 </blockquote>
-<h3 id="stage-iiid-full-system-stage3d">Stage III.D: Full system {#stage3d}</h3>
+<h3 id="stage3d">Stage III.D: Full system</h3>
 <p>Now try the full system to retrieve matches to an unseen query image.</p>
 <p><img src="images/query.jpeg" alt="query" width-=400px/></p>
 <h2 id="part-iv-large-scale-retrieval">Part IV: Large scale retrieval</h2>
@@ -303,8 +288,28 @@ $$</p>
 <p><img src="images/erc.jpeg" alt="erc" height=100px/><img src="images/PASCAL2.png" alt="pascal2" height=100px/></p>
 <h2 id="history">History</h2>
 <ul>
-<li>Used in the Oxford AIMS CDT, 2014-15</li>
+<li>Used in the Oxford AIMS CDT, 2014-18</li>
 <li>Used at <a href="http://www.di.ens.fr/willow/events/cvml2012/">ENS/INRIA Visual Recognition and Machine Learning Summer School, 2012</a>.</li>
 <li>Used at <a href="http://www.clsp.jhu.edu/workshops/archive/ws-12/summer-school/">JHU Summer School on Human Language Technology, 2012</a>.</li>
-</ul></body>
+</ul><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+  "HTML-CSS": { availableFonts: ["TeX"] },
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+  });
+if (typeof MathJaxListener !== 'undefined') {
+  MathJax.Hub.Register.StartupHook('End', function () {
+    MathJaxListener.invokeCallbackForKey_('End');
+  });
+}
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/javascript" src="prism.js"></script>
+</body>
 </html>
