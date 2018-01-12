@@ -1,5 +1,6 @@
 *~
 data
+doc/base.ss
 doc/prism.css
 doc/prism.js
 vlfeat
