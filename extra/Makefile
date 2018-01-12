@@ -1,4 +1,4 @@
-name ?= instance-recognition
+name ?= practical-instance-recognition
 ver ?= 2018a
 
 code=\
